@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { rom } from "../core/rom";
 import { BY, CAT, DATA, GEO, ITEMS, LINES, isArea } from "../core/util";
 import { sfx } from "../audio/music";
 import { insets, toast } from "../ui/dom";
@@ -323,7 +324,7 @@ class MapScene extends Phaser.Scene {
     for (const it of ITEMS) if (isArea(it)) {
       const big = it.t === 'r', c = this.add.container(it.x, it.y);
       const a = this.add.text(0, 0, it.hz, { fontFamily: 'FP, FP2', fontSize: big ? '24px' : '12px', color: big ? '#3a2a18' : '#5a4630', stroke: '#fbf3dd', strokeThickness: big ? 4 : 3 }).setOrigin(0.5, 1);
-      const b = this.add.text(0, 1, it.yale, { fontFamily: 'FP, FP2', fontSize: '12px', color: '#9a6a14', stroke: '#fbf3dd', strokeThickness: 3 }).setOrigin(0.5, 0);
+      const b = this.add.text(0, 1, rom(it.yale), { fontFamily: 'FP, FP2', fontSize: '12px', color: '#9a6a14', stroke: '#fbf3dd', strokeThickness: 3 }).setOrigin(0.5, 0);
       c.add([a, b]); c.isRegion = big; c.it = it; c.setVisible(false); this.dl.add(c);
     }
   }
@@ -445,7 +446,7 @@ class MapScene extends Phaser.Scene {
   }
   clearFx() { this.fx.removeAll(true); this.highlightArea(null); this.highlightLine(null); this.follow = null; }
   pin(it) { const p = this.add.image(it.x, it.y, 'pin').setOrigin(0.5, 1); p.fixed = 2.2; this.fx.add(p); this.tweens.add({ targets: p, alpha: { from: 0, to: 1 }, duration: 250 }); return p; }
-  label(it, ok = true) { const t = this.add.text(it.x, it.y, it.hz + '\n' + it.yale, { fontFamily: 'FP, FP2', fontSize: '12px', color: ok ? '#1f6b2a' : '#8a3a10', align: 'center', stroke: '#fbf3dd', strokeThickness: 4 }).setOrigin(0.5, 1); t.fixed = 1.4; t.dy = -12; this.fx.add(t); return t; }
+  label(it, ok = true) { const t = this.add.text(it.x, it.y, it.hz + '\n' + rom(it.yale), { fontFamily: 'FP, FP2', fontSize: '12px', color: ok ? '#1f6b2a' : '#8a3a10', align: 'center', stroke: '#fbf3dd', strokeThickness: 4 }).setOrigin(0.5, 1); t.fixed = 1.4; t.dy = -12; this.fx.add(t); return t; }
   mark(x, y, ok) { const t = this.add.text(x, y, '×', { fontFamily: 'FP, FP2', fontSize: '24px', color: ok ? '#1f8a3a' : '#d0312d', stroke: '#fbf3dd', strokeThickness: 3 }).setOrigin(0.5); t.fixed = 1; this.fx.add(t); }
   line(x0, y0, x1, y1, ok) { const g = this.add.graphics(); g.lineStyle(1.5 / this.cam.zoom, ok ? 0x1f8a3a : 0xd0312d, 1); g.lineBetween(x0, y0, x1, y1); this.fx.add(g); }
   travel(from, to, kind, color) {

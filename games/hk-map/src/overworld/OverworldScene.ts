@@ -9,6 +9,7 @@ import { stars } from '../core/state';
 import { districtAt } from '../map/geo';
 import { banner, toast } from '../ui/dom';
 import { say } from '../audio/voice';
+import { rom } from '../core/rom';
 import type { Item } from '../types';
 import { CHUNK, Grid, cellOf, chunksFor } from './grid';
 import { DIRS, TILE, type Dir } from './terrain';
@@ -200,7 +201,7 @@ export class OverworldScene extends Phaser.Scene {
     const [x, y] = this.cellCenter(...m.cell);
     const a = this.add.text(0, 0, known ? m.it.hz : '？？？', { fontFamily: 'FP, FP2', fontSize: known ? '24px' : '12px', color: '#241a12', stroke: '#fbf3dd', strokeThickness: 3 }).setOrigin(0.5, 1);
     const parts: Phaser.GameObjects.GameObject[] = [a];
-    if (known) parts.push(this.add.text(0, 1, m.it.yale, { fontFamily: 'FP, FP2', fontSize: '12px', color: '#9a6a14', stroke: '#fbf3dd', strokeThickness: 3 }).setOrigin(0.5, 0));
+    if (known) parts.push(this.add.text(0, 1, rom(m.it.yale), { fontFamily: 'FP, FP2', fontSize: '12px', color: '#9a6a14', stroke: '#fbf3dd', strokeThickness: 3 }).setOrigin(0.5, 0));
     // 12 px on screen at any zoom, drawn at the screen's resolution so it stays sharp
     const z = this.cameras.main.zoom;
     for (const p of parts) (p as Phaser.GameObjects.Text).setResolution(z * (window.devicePixelRatio || 1));

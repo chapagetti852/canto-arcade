@@ -1,0 +1,21 @@
+// The arcade asks once how Cantonese should be written (Yale or Jyutping), remembers it for every game,
+// and shows names in it; 拼音 (top left) changes it again.
+export default [
+  { name: 'arcade room opens', action: 'waitFor', expression: `game.scene.isActive('ArcadeScene')`, timeout: 10000 },
+  { name: 'first visit: the question is asked', action: 'expect', expect: { expression: `!!document.querySelector('#rom-panel [data-r=jyutping]') && !document.querySelector('#rom-panel .x')`, equals: true } },
+  { name: 'choose Jyutping', action: 'eval', code: `document.querySelector('#rom-panel [data-r=jyutping]').click()` },
+  { name: 'let the room restart', action: 'wait', ms: 600 },
+  { name: 'room redraws', action: 'waitFor', expression: `game.scene.isActive('ArcadeScene') && !!scene('ArcadeScene').player`, timeout: 5000 },
+  { name: 'remembered for every game', action: 'expect', expect: { expression: `localStorage.getItem('canto-romanisation')`, equals: 'jyutping' } },
+  { name: 'the question is gone, 拼音 shows the choice', action: 'expect', expect: { expression: `!document.querySelector('#rom-panel') && document.querySelector('#rom-btn').textContent`, equals: '拼音 Jyutping' } },
+  { name: 'the room\'s title line is in Jyutping too', action: 'expect', expect: { expression: `scene('ArcadeScene').children.list.find(o => o.text && o.text.includes('CANTO ARCADE')).text`, contains: 'gwong2 dung1 waa2 gei1 pou3' } },
+  { name: 'settle', action: 'wait', ms: 400 },
+  { name: 'stand at 香港通', action: 'eval', code: `window.__noNavigate = true; const s = scene('ArcadeScene'); s.target = null; s.player.setPosition(104, 140);` },
+  { name: 'walk up to it', action: 'key', key: 'ArrowUp', duration: 300 },
+  { name: 'its name in Jyutping', action: 'expect', expect: { expression: `scene('ArcadeScene').bar.info.text`, contains: 'hoeng1 gong2 tung1' } },
+  { name: 'Jyutping', action: 'screenshot' },
+  { name: '拼音 opens it again; choose Yale', action: 'eval', code: `document.querySelector('#rom-btn').click(); document.querySelector('#rom-panel [data-r=yale]').click();` },
+  { name: 'let it restart again', action: 'wait', ms: 600 },
+  { name: 'room redraws again', action: 'waitFor', expression: `game.scene.isActive('ArcadeScene') && !!scene('ArcadeScene').player`, timeout: 5000 },
+  { name: 'back to Yale', action: 'expect', expect: { expression: `localStorage.getItem('canto-romanisation') + ' · ' + document.querySelector('#rom-btn').textContent`, equals: 'yale · 拼音 Yale' } },
+];

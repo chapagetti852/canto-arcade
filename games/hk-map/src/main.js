@@ -19,10 +19,13 @@ import { G } from "./game/G";
 import { MAP, MapScene } from "./scenes/MapScene";
 import { SYNC, loadLocal, reconnectFolder } from "./core/save";
 import { ST } from "./core/state";
+import { checkAnswer, rom, watchRomanisation } from "./core/rom";
+import { currentTyping } from "./ui/typing";
 
 let GAME = null;
 if (params.has('debug')) window.__hk = { G, map: () => MAP, ST: () => ST, areaKeyAt: (x, y, c) => areaKeyAt(x, y, c), runMini: id => runMini(id) };
 function start() {
+  watchRomanisation(); // Jyutping readers: every Yale word on screen shown in Jyutping
   loadLocal(); SYNC.run(); pickVoice(); try { speechSynthesis.onvoiceschanged = pickVoice; } catch (e) {}
   if (ANKI) reconnectFolder(false);
   // iPhone keyboard: iOS shrinks and scrolls the *visual* viewport only, so #ui is resized and moved to match it
@@ -49,6 +52,6 @@ function start() {
   });
 }
 // For the arcade's playtests (playtest/back-button.mjs): drive the screens from outside the closure.
-window.__hk = { G, LEVELS, ITEMS, MG, showFact, openCollection, openSettings, openMinis, openSnackBook, runMini, closeModal, modalOpen };
+window.__hk = { G, LEVELS, ITEMS, MG, showFact, openCollection, openSettings, openMinis, openSnackBook, runMini, closeModal, modalOpen, currentTyping, checkAnswer, rom };
 start();
 

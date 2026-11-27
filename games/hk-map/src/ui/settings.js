@@ -1,5 +1,7 @@
 import { $, BUNDLED, ITEMS, esc, ic } from "../core/util";
 import { ANKI } from "../core/anki";
+import { JP } from "../core/rom";
+import { setRomanisation } from "../../../../src/shared/romanisation";
 import { MUSIC } from "../audio/music";
 import { bind } from "./dom";
 import { audioFor, azure, fileOf, lineFile, lineUrl, playUrl, saveToFolder } from "../audio/voice";
@@ -14,6 +16,9 @@ let resetArmed = false;
 function openSettings() {
   const s = ST.settings, ready = ANKI ? ankiReady() : [];
   openModal(`<div class="hd">${ic('settings-cog')}<h2>設定 <span class="y">Chitdihng</span></h2><button class="iconbtn" data-a="x">${ic('close')}</button></div>
+  <div data-no-rom><h3>拼音 Romanisation</h3>
+  <div class="rowb"><button class="btn sm ${JP ? '' : 'gold'}" data-a="yale">Yale · Gwóngdūngwá</button><button class="btn sm ${JP ? 'gold' : ''}" data-a="jyutping">Jyutping · gwong2 dung1 waa2</button></div>
+  <p>How Cantonese is written in every game of the arcade, and how you type your answers. Yale (tone marks) is what the CLA textbooks use; Jyutping (tone numbers) is common in dictionaries and apps. Your progress is the same either way.</p></div>
   <h3>${ic('music')} Music & sound</h3>
   <div class="rowb"><button class="btn sm ${s.music ? 'gold' : ''}" data-a="music">♪ Music ${s.music ? 'on' : 'off'}</button><button class="btn sm ${s.sfx ? 'gold' : ''}" data-a="sfx">Sound effects ${s.sfx ? 'on' : 'off'}</button><button class="btn sm ${s.tones ? 'gold' : ''}" data-a="tones">Tone keys ${s.tones ? 'on' : 'off'}</button></div>
   <p>Tone keys add ā á a àh áh ah buttons under the answer box (handy on phones). On a keyboard you can also type tone numbers: <span class="y">yau4 → yàuh</span>, <span class="y">sik1 → sīk</span>.</p>
@@ -42,6 +47,7 @@ function openSettings() {
   const keep = () => { s.key = $('#m-key').value.trim(); s.region = $('#m-region').value.trim().toLowerCase(); s.voice = $('#m-voice').value; save(); };
   ['m-key', 'm-region', 'm-voice'].forEach(id => $('#' + id).addEventListener('change', keep));
   bind(BOX, {
+    yale: () => { keep(); setRomanisation('yale'); location.reload(); }, jyutping: () => { keep(); setRomanisation('jyutping'); location.reload(); },
     x: () => { keep(); resetArmed = false; closeModal(); },
     music: () => { keep(); MUSIC.toggle(); openSettings(); }, sfx: () => { keep(); s.sfx = !s.sfx; save(); openSettings(); }, tones: () => { keep(); s.tones = !s.tones; ST.flags.tonesSet = 1; save(); openSettings(); },
     test: async () => { keep(); st('m-audio', 'Asking Azure…'); try { const b = await azure('尖沙咀'); MUSIC.duck(true); await playUrl(URL.createObjectURL(b)); st('m-audio', 'Works! 好嘢 Hóu yéh!'); } catch (e) { st('m-audio', s.key ? 'Azure did not answer (' + (e.message || e) + '). Check the key and region.' : 'No key: names use the recordings or your device voice.'); } finally { MUSIC.duck(false); } },

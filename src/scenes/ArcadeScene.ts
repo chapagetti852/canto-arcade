@@ -7,6 +7,8 @@ import { ankiReachable } from '../shared/anki';
 import { syncAll, syncOn } from '../shared/gist';
 import { closeAnkiPanel, openAnkiPanel, type PanelState } from '../ui/ankiPanel';
 import { sfx } from '../shared/sfx';
+import { rom } from '../shared/romanisation';
+import { setupRomanisation } from '../ui/romPanel';
 
 const ls = {
   get: (k: string): string | null => { try { return localStorage.getItem(k); } catch { return null; } },
@@ -43,6 +45,8 @@ export class ArcadeScene extends Phaser.Scene {
     this.progress = {};
     this.light = null;
     closeAnkiPanel();
+    // how Cantonese is written (asked on the first visit); switching redraws the room's labels
+    setupRomanisation(() => this.scene.restart());
     this.add.image(0, 0, 'room').setOrigin(0).setDepth(0);
     this.makeSign();
     const solid = this.physics.add.staticGroup();
@@ -68,7 +72,7 @@ export class ArcadeScene extends Phaser.Scene {
     this.makeBar();
     this.say(
       back ? '歡迎返嚟！' : '歡迎！',
-      back ? 'Fūnyìhng fāanlàih! · welcome back' : 'Fūnyìhng! · walk up to a machine to play',
+      back ? `${rom('Fūnyìhng fāanlàih!')} · welcome back` : `${rom('Fūnyìhng!')} · walk up to a machine to play`,
     );
     this.cameras.main.fadeIn(300, 0, 0, 0);
     if (ankiMode()) this.startAnki();
@@ -102,7 +106,7 @@ export class ArcadeScene extends Phaser.Scene {
         const sent = await sendMapToAnki();
         if (sent && sent.places) {
           this.anki.lastSent = `Just now: ${sent.places} learned 香港通 place${sent.places > 1 ? 's' : ''} → ${sent.cards} card${sent.cards === 1 ? '' : 's'} unsuspended, due today.`;
-          if (alive()) { sfx.coin(); this.say('解鎖！', `Gáaisó ${sent.cards} jēung kāat · ${sent.places} learned place${sent.places > 1 ? 's' : ''} from 香港通 now in Anki, due today`); }
+          if (alive()) { sfx.coin(); this.say('解鎖！', `${rom('Gáaisó')} ${sent.cards} ${rom('jēung kāat')} · ${sent.places} learned place${sent.places > 1 ? 's' : ''} from 香港通 now in Anki, due today`); }
           await sync();
         }
       } catch (e) {
@@ -123,7 +127,7 @@ export class ArcadeScene extends Phaser.Scene {
   private makeSign(): void {
     const glow = this.add.text(240, 20, '廣東話機舖', { ...TXT('#ff4fa3', 24) }).setOrigin(0.5).setDepth(1).setAlpha(0.35).setScale(1.04);
     this.add.text(240, 20, '廣東話機舖', { ...TXT('#ffd1ea', 24) }).setOrigin(0.5).setDepth(2);
-    this.add.text(240, 41, 'Gwóngdūngwá Gēipou · CANTO ARCADE', TXT('#2de2e6')).setOrigin(0.5).setDepth(2);
+    this.add.text(240, 41, `${rom('Gwóngdūngwá Gēipou')} · CANTO ARCADE`, TXT('#2de2e6')).setOrigin(0.5).setDepth(2);
     // neon flicker
     this.time.addEvent({ delay: 2600, loop: true, callback: () => {
       this.tweens.add({ targets: glow, alpha: { from: 0.1, to: 0.35 }, duration: 90, yoyo: true, repeat: Phaser.Math.Between(0, 2) });
@@ -196,8 +200,8 @@ export class ArcadeScene extends Phaser.Scene {
     if (!m) { this.say('', '← → ↑ ↓ / WASD to walk · tap to walk there'); return; }
     sfx.blip();
     const touch = this.sys.game.device.input.touch;
-    if (playable(m)) this.say(m.hz, `${m.yale} · ${m.en}`, touch ? '▶ 玩 wáan' : '▶ SPACE 玩 wáan');
-    else this.say(m.hz, `${m.yale} · ${m.en}`);
+    if (playable(m)) this.say(m.hz, `${rom(m.yale)} · ${m.en}`, touch ? `▶ 玩 ${rom('wáan')}` : `▶ SPACE 玩 ${rom('wáan')}`);
+    else this.say(m.hz, `${rom(m.yale)} · ${m.en}`);
   }
 
   // ── moving and playing ─────────────────────────────────────────────────────

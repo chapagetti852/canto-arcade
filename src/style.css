@@ -13,3 +13,11 @@ canvas { display: block; touch-action: none; }
 #anki-panel .row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
 #anki-panel button { font: inherit; color: #f5e6c8; background: #2a2440; border: 2px solid #3b2d63; padding: 4px 10px; cursor: pointer; } #anki-panel button:disabled { opacity: .45; cursor: default; }
 #anki-panel .x { position: absolute; top: 6px; right: 6px; padding: 0 6px; }
+/* 拼音: the reader's romanisation (src/ui/romPanel.ts) */
+#rom-btn { position: fixed; top: 10px; left: 10px; z-index: 9; font: 12px PixelZh, monospace; color: #f5e6c8; background: #0b0916d9; border: 2px solid #3b2d63; padding: 3px 8px; cursor: pointer; }
+#rom-panel { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 11; width: min(380px, calc(100vw - 24px)); padding: 14px 16px; background: #0b0916f5; border: 2px solid #3b2d63; color: #f5e6c8; font: 14px/1.45 PixelZh, monospace; }
+#rom-panel h2 { margin: 0 0 6px; font-size: 16px; } #rom-panel p { margin: 6px 0; } #rom-panel .dim { color: #9a8fc4; } #rom-panel .small { font-size: 12px; }
+#rom-panel .choices { display: flex; flex-direction: column; gap: 8px; margin: 10px 0; }
+#rom-panel .choices button { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; font: inherit; color: #f5e6c8; background: #2a2440; border: 2px solid #3b2d63; padding: 8px 12px; min-height: 44px; cursor: pointer; }
+#rom-panel .choices button.sel { border-color: #ffd166; } #rom-panel .choices b { color: #ffd166; } #rom-panel .choices small { color: #9a8fc4; font-size: 12px; }
+#rom-panel .x { position: absolute; top: 6px; right: 6px; font: inherit; color: #f5e6c8; background: none; border: 0; cursor: pointer; }

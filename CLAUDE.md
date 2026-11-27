@@ -5,7 +5,7 @@ Cantonese learning games in one place: a Phaser 4 arcade room you walk around; e
 **Course context lives in the private repo `chapagetti852/canto-course`** — read its `CLAUDE.md` before any Cantonese content work (Yale only, CLA spellings, lenient answer checking, the owner's Anki setup, the textbook transcriptions). Attach it to the session if it isn't there.
 
 ## Hard rules
-- Yale with tone marks only; never Jyutping, Mandarin or simplified characters.
+- Yale with tone marks is the source everywhere (data, answers, Anki); never Mandarin or simplified characters. Players may choose **Jyutping** instead (asked on the first arcade visit, `canto-romanisation` in localStorage, switchable in each game's settings): it is always derived from the Yale at display/check time by `src/shared/romanisation.ts`, never stored.
 - This repo is **public** and classmates may play: no Anki data, Azure key, GitHub token or textbook text in it. Secrets live only in the owner's browser (localStorage). Anki features appear only in the private Anki mode. Nothing in the games may refer to the owner personally (no "your parish", names, or home): classmates may play.
 - Never break saved progress: games keep their saves in the browser under fixed keys (`hkmapgame-v3` + IndexedDB `hkmapgame` for 香港通, `canto-numbers-v1` for Canto Numbers, `canto-arcade-v1` for the room). The whole site shares one origin, so moving files around is safe; renaming a key is not.
 
@@ -15,7 +15,8 @@ Cantonese learning games in one place: a Phaser 4 arcade room you walk around; e
 | `src/` | The arcade (TypeScript, Phaser 4.2, from the phaser-init scaffold). `scenes/ArcadeScene.ts` is the room; `logic/machines.ts` lists the machines (add a game = one entry); `logic/progress.ts` reads each game's save to show progress on its machine. |
 | `games/hk-map/` | 香港通, the HK map game (an npm workspace, Vite). Code in `src/`, static files (audio, img, data) in `public/`, plan in `docs/ARCHITECTURE.md`. Built into `public/games/hk-map/` (git-ignored) by `npm run build:games`. `npm run hkmap` (Python 3 + fontTools) regenerates its data and pixel font after data or text changes. `build/render_map.py` (the map picture) also needs big external inputs not kept here; see `games/hk-map/README.md`. |
 | `games/canto-numbers/` | Canto Numbers (TypeScript/Phaser, an npm workspace). Built into `public/games/canto-numbers/` by `npm run build:games` (part of `npm run build`; that folder is git-ignored). |
-| `playtest/` | Browser scenarios run by `npm run verify` — each feature gets one. |
+| `playtest/` | Browser scenarios run by `npm run verify` — each feature gets one. `playtest/phone/` also runs at iPhone size (`npm run playtest:phone`). |
+| `src/shared/romanisation.ts` | Yale ↔ Jyutping and the reader's choice, shared by the arcade and both games (imported by relative path). |
 | `tools/subset-zh.py` | Rebuilds the 12px pixel font (Fusion Pixel, OFL) for every character used in `src/`. Run `npm run font` after adding Chinese or Yale text to the arcade. |
 
 ## Commands

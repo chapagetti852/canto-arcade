@@ -4,12 +4,14 @@ import { hideBar, touch } from '../answerBar';
 import { playMusic, setMuted } from '../sound';
 import { HEX, isNewPlayer, PAL, save, state, type Mode } from '../state';
 import { confettiBackground, FONT_ZH, glisten, text } from '../ui';
+import { JP, ROM_NAME, rom } from '../rom';
+import { setRomanisation } from '../../../../src/shared/romanisation';
 
 const TITLE = [HEX.red, HEX.ink, HEX.gold, HEX.rose];
 
 const MODES: { mode: Mode; title: string; line: string; example: string; fill: number }[] = [
   { mode: 'listen', title: 'Listen', line: 'hear a number, type the digits', example: '"sāam sahp baat" → 38', fill: PAL.red },
-  { mode: 'read', title: 'Read', line: 'see a number, write it in yale', example: '38 → sāam sahp baat', fill: PAL.gold },
+  { mode: 'read', title: 'Read', line: `see a number, write it in ${ROM_NAME}`, example: '38 → sāam sahp baat', fill: PAL.gold },
 ];
 
 /** Step 1: pick a mode. Step 2 is LevelsScene. */
@@ -38,7 +40,7 @@ export class MenuScene extends Phaser.Scene {
         l.y = 64 + Math.sin(this.time.now / 150 + i) * 3;
       }),
     });
-    text(this, cx, 100, 'cantonese numbers & money, in yale', 12, HEX.dim, true);
+    text(this, cx, 100, `cantonese numbers & money, in ${ROM_NAME}`, 12, HEX.dim, true);
     text(this, cx, 150, 'choose how to practise', 11, HEX.ink);
 
     MODES.forEach((m, i) => this.card(cx, 230 + i * 150, m));
@@ -54,6 +56,9 @@ export class MenuScene extends Phaser.Scene {
       });
       refresh();
     }
+    // how Cantonese is written in every game of the arcade (shared setting): reloads to switch everything
+    const romBtn = text(this, cx, touch ? 526 : 500, `writing: ${ROM_NAME}  ⇄`, 11, HEX.rose).setInteractive({ useHandCursor: true });
+    romBtn.on('pointerdown', () => { setRomanisation(JP ? 'yale' : 'jyutping'); window.location.reload(); });
     const sound = text(this, cx, 552, '', 11, HEX.rose).setInteractive({ useHandCursor: true });
     const refreshSound = () => sound.setText(`music & sfx: ${state.muted ? 'off' : 'on'}  ⇄`);
     sound.on('pointerdown', () => {
@@ -103,7 +108,7 @@ export class MenuScene extends Phaser.Scene {
       box,
       text(this, cx, y - 34, m.title, 26, Phaser.Display.Color.IntegerToColor(m.fill).rgba),
       text(this, cx, y + 4, m.line, 13, HEX.ink, true),
-      text(this, cx, y + 34, m.example, 13, HEX.dim, true),
+      text(this, cx, y + 34, rom(m.example), 13, HEX.dim, true),
     ];
     parts.slice(1).forEach((p) => p.setDepth(2));
     box.on('pointerdown', () => this.pick(m.mode));

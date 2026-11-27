@@ -2,6 +2,7 @@
 // On phones the system keyboard never opens (it resizes the page and is janky); the in-app
 // keys are the only input. On PC they are optional (menu setting).
 import { applyTone } from './yale/check';
+import { JP, tileLabel } from './rom';
 
 const bar = document.getElementById('answer-bar')!;
 const input = document.getElementById('answer') as HTMLInputElement;
@@ -44,8 +45,14 @@ function onTap(el: HTMLElement, fn: (btn: HTMLButtonElement) => void): void {
   });
 }
 
+// Jyutping readers: the tiles show Jyutping letters, the tone keys type a digit after the syllable
+if (JP) {
+  tiles.querySelectorAll<HTMLButtonElement>('[data-syl]').forEach((b) => { b.dataset.syl = tileLabel(b.dataset.syl!); b.textContent = b.dataset.syl; });
+  tones.querySelectorAll<HTMLButtonElement>('[data-tone]').forEach((b) => { b.textContent = b.dataset.tone!; });
+}
+
 onTap(tones, (btn) => {
-  input.value = applyTone(input.value, Number(btn.dataset.tone));
+  input.value = JP ? input.value.replace(/\d$/, '') + btn.dataset.tone : applyTone(input.value, Number(btn.dataset.tone));
   updateHint();
 });
 
@@ -67,7 +74,7 @@ onTap(tiles, (btn) => {
 function updateHint(): void {
   if (!tilesOn) return hint.replaceChildren();
   const last = input.value.trim().split(/[\s-]+/).pop() ?? '';
-  const toned = /[̀-ͯ]|h$/.test(last.normalize('NFD')) || /^(sei|baat|go|bun)$/.test(last);
+  const toned = JP ? /\d$/.test(last) : /[̀-ͯ]|h$/.test(last.normalize('NFD')) || /^(sei|baat|go|bun)$/.test(last);
   hint.textContent = !last ? 'tap a syllable' : toned ? 'next syllable, or GO' : `now a tone for "${last}"`;
 }
 
@@ -89,7 +96,7 @@ export function showBar(o: BarOptions): void {
   tilesOn = !o.digits && keys;
   input.inputMode = touch ? 'none' : o.digits ? 'decimal' : 'text';
   input.readOnly = touch;
-  input.placeholder = keys ? '' : o.digits ? '38.50' : 'sāam go yih';
+  input.placeholder = keys ? '' : o.digits ? '38.50' : JP ? 'saam1 go3 ji6' : 'sāam go yih';
   tiles.classList.toggle('hidden', !tilesOn);
   digits.classList.toggle('hidden', !(o.digits && keys));
   tones.classList.toggle('hidden', o.digits);

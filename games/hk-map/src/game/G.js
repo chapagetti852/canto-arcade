@@ -15,6 +15,7 @@ import { KDOWN, PADV, SNACKS, makeWorld, nearestItem, openSnackBook, seaAt, toas
 import { openCollection } from "../ui/collection";
 import { openSettings } from "../ui/settings";
 import { MAP } from "../scenes/MapScene";
+import { ROM_NAME } from "../core/rom";
 import { DIR, dirOK, reconnectFolder, save } from "../core/save";
 import { MISSIONS, RANKS, ST, addPoints, ankiReady, credit, currentLevel, debit, gatePending, levelStats, mastered, meet, mission, missionsToday, nextStep, rankOf, rec, starStr, stars, streak, today, unlocked, xp } from "../core/state";
 
@@ -39,7 +40,7 @@ const G = {
     const seen = ITEMS.filter(i => stars(i)).length, due = ITEMS.filter(i => stars(i) && !mastered(i)).length, ready = ANKI ? ankiReady().length : 0;
     const pct = N ? Math.round(100 * (x - R[0]) / (N[0] - R[0])) : 100, ms = missionsToday(), md = ms.filter(m => m.done).length;
     setCenter(`<div class="home panel">
-      <div class="logo">香港通</div><div class="logo-sub">Hēunggóng Tūng · learn Hong Kong's places in Yale</div>
+      <div class="logo">香港通</div><div class="logo-sub">Hēunggóng Tūng · learn Hong Kong's places in ${ROM_NAME}</div>
       <button class="cont" data-a="go">
         <span class="lvtag">Level ${L.n} / ${LEVELS.length}</span>
         <span class="cz">${esc(L.zh)} <span class="y">${esc(L.yale)}</span></span><span class="en">${esc(L.en)}</span>
@@ -269,7 +270,7 @@ const G = {
     G.mode = 'type'; MAP.clearFx(); G.geoLabels = false; MAP.setRules(() => false);
     if (it.t === 'l') { MAP.highlightLine(it.k.slice(2)); G.qHud('呢條係咩綫？ <span class="y" style="font-size:12px">Nī tìuh haih mē sin?</span>', 'Which line is highlighted? Type its name.', n, total, combo); }
     else if (isArea(it)) { MAP.highlightArea(it.k); G.qHud('呢個係咩區？ <span class="y" style="font-size:12px">Nī go haih mē kēui?</span>', 'Which ' + (it.t === 'r' ? 'region' : 'district') + ' is highlighted?', n, total, combo); }
-    else { MAP.pin(it); G.qHud(`「${esc(it.hz)}」點讀？ <span class="y" style="font-size:12px">Dím duhk?</span>`, esc(it.en) + ' — type the Yale', n, total, combo); }
+    else { MAP.pin(it); G.qHud(`「${esc(it.hz)}」點讀？ <span class="y" style="font-size:12px">Dím duhk?</span>`, esc(it.en) + ' — type the ' + ROM_NAME, n, total, combo); }
     const u = photoUrl(it);
     setSheet(`${(it.t === 'l' || isArea(it)) ? '' : `<div class="stop">${u ? `<img class="thumb" alt="" src="${esc(u)}" onerror="this.remove()">` : ''}<div class="main"><span class="huge">${esc(it.hz)}</span><div class="en">${esc(it.en)}</div></div></div>`}${typebarHTML()}`);
     if (u && innerWidth > 700 && innerHeight > 500 && it.t !== 'l') setSide(`<img class="ph" alt="" src="${esc(u)}" onerror="this.parentNode.hidden=true"><div class="cap">${esc(it.hz)}</div><div class="cr">${credit_(it)}</div>`, 'paper polaroid');

@@ -3,6 +3,8 @@ import { MUSIC, sfx } from "../audio/music";
 import { KEYS, UI, bind, burst, setKEYS } from "../ui/dom";
 import { say } from "../audio/voice";
 import { base, checkYale, nfd, retone, toneInput } from "../yale/yale";
+import { JP, ROM_NAME, TONE_KEYS, checkAnswer, rom } from "../core/rom";
+import { attachKeyboard } from "../ui/keyboard";
 import { closeModal, openModal } from "../ui/modal";
 import { G } from "../game/G";
 import { save } from "../core/save";
@@ -17,10 +19,10 @@ const MG_GATE = { 5: 'bus', 9: 'ferry', 13: 'bun', 17: 'typhoon' };
 const MG_AT = { 'P:1792654808417': 'ferry', 'X:HARBOUR': 'ferry', 'S:MOK': 'bus', 'S:MKK': 'bus', 'P:1792654808966': 'bus', 'P:1792654807715': 'bun', 'X:LIONROCK': 'typhoon', 'P:1792654808317': 'typhoon' };
 const MG = {
   bus: { zh: '有落！', yale: 'Yáuh lohk!', en: 'Minibus', how: 'You\'re on a red minibus and the driver won\'t stop unless you shout. Listen for your stop, then hit 有落！ just as its sign reaches the bus.', goal: 'Get off at 5 of 8 stops.' },
-  ferry: { zh: '天星過海', yale: 'Tīnsīng gwo hói', en: 'Star Ferry', how: 'Steer the ferry (drag, or ← →) to catch the lifebuoy with the right Yale for the name at the top. Watch the tone marks — and the junks!', goal: 'Catch 7 of 10.' },
+  ferry: { zh: '天星過海', yale: 'Tīnsīng gwo hói', en: 'Star Ferry', how: 'Steer the ferry (drag, or ← →) to catch the lifebuoy with the right ' + ROM_NAME + ' for the name at the top. Watch the tones — and the junks!', goal: 'Catch 7 of 10.' },
   bun: { zh: '搶包山', yale: 'Chéung bāausāan', en: 'Bun Scramble', how: 'Climb the Cheung Chau bun tower! Grab buns whose syllable has the tone shown at the top. Wrong tone and you slide down.', goal: 'Reach the top (12 buns) in 45 seconds.' },
-  mahjong: { zh: '麻雀配對', yale: 'Màhjeuk puideui', en: 'Mahjong Match', how: 'Flip two mahjong tiles at a time to pair each name with its Yale. Every tile says its name when it turns over — listen!', goal: 'Clear all 8 pairs in 75 seconds.' },
-  typhoon: { zh: '打風', yale: 'Dá fūng', en: 'Typhoon Signal', how: 'Names blow across the city in a rising typhoon. Type their Yale (tone numbers work: yau4 → yàuh) before they hit the ground.', goal: 'Blow away 10 names before your 3 umbrellas are gone.' },
+  mahjong: { zh: '麻雀配對', yale: 'Màhjeuk puideui', en: 'Mahjong Match', how: 'Flip two mahjong tiles at a time to pair each name with its ' + ROM_NAME + '. Every tile says its name when it turns over — listen!', goal: 'Clear all 8 pairs in 75 seconds.' },
+  typhoon: { zh: '打風', yale: 'Dá fūng', en: 'Typhoon Signal', how: 'Names blow across the city in a rising typhoon. Type their ' + ROM_NAME + (JP ? ' (a tone number after each syllable)' : ' (tone numbers work: yau4 → yàuh)') + ' before they hit the ground.', goal: 'Blow away 10 names before your 3 umbrellas are gone.' },
 };
 const mgPassed = id => !!(ST.flags.mg && ST.flags.mg[id] && ST.flags.mg[id].pass);
 function mgOpen(id) { if (id === 'mahjong') return mgPassed(id) || ITEMS.filter(i => stars(i) && i.t !== 'l').length >= 6;
@@ -81,9 +83,10 @@ function runMini(id, opts = {}) {
     const ro = new ResizeObserver(fit); ro.observe(stage); fit();
     const prevKeys = KEYS; setKEYS({}); MUSIC.play('mini');
     let raf = 0, last = 0, live = false, game = null, closed = false;
-    const finish = res => { if (closed) return; closed = true; cancelAnimationFrame(raf); ro.disconnect(); ov.hidden = true; ov.innerHTML = ''; document.body.classList.remove('mg', 'kb'); setKEYS(prevKeys); MUSIC.play(opts.music || 'title'); done(res); };
+    const cleanups = [];
+    const finish = res => { if (closed) return; closed = true; cleanups.splice(0).forEach(f => f()); cancelAnimationFrame(raf); ro.disconnect(); ov.hidden = true; ov.innerHTML = ''; document.body.classList.remove('mg', 'kb'); setKEYS(prevKeys); MUSIC.play(opts.music || 'title'); done(res); };
     const FX = []; let flash = 0, flashC = '#fff';
-    const T = { W, H, g, sfx, say, stat: h => stat.innerHTML = h, bottom: h => { bottom.innerHTML = h; }, bottomEl: bottom, end: r => end(r), shake: 0 };
+    const T = { W, H, g, sfx, say, stat: h => stat.innerHTML = h, bottom: h => { bottom.innerHTML = h; }, bottomEl: bottom, end: r => end(r), shake: 0, onEnd: f => cleanups.push(f) };
     const text = (s, x, y, o = {}) => { g.font = o.sys ? `bold ${o.size || 14}px "Helvetica Neue", Arial, sans-serif` : `${o.size || 12}px FP, FP2, sans-serif`; g.textAlign = o.align || 'center'; g.textBaseline = 'middle'; if (o.stroke) { g.lineWidth = 4; g.strokeStyle = o.stroke; g.strokeText(s, x, y); } g.fillStyle = o.color || '#f4ead2'; g.fillText(s, x, y); };
     T.text = text;
     /* juice: confetti-ish pixel bursts, floating text, a quick screen flash */
@@ -149,7 +152,7 @@ const GAMES = {
         g.fillStyle = '#4a4a52'; g.fillRect(0, ROAD, W, H - ROAD); g.fillStyle = '#e8e0c8'; for (let x = -(off % 40); x < W; x += 40) g.fillRect(x, ROAD + 44, 20, 4); g.fillStyle = '#8b8b93'; g.fillRect(0, ROAD - 4, W, 4);
         signs.forEach(s => { if (s.x < -60 || s.x > W + 60) return; g.fillStyle = '#6b6b6b'; g.fillRect(s.x - 1, ROAD - 70, 3, 66); const big = s.it.hz.length <= 4, w = Math.max(48, s.it.hz.length * (big ? 25 : 13) + 12); g.fillStyle = s.done && s.it === target ? '#f6c945' : '#2f7d4f'; g.fillRect(s.x - w / 2, ROAD - 100, w, 30); g.strokeStyle = '#f4ead2'; g.lineWidth = 2; g.strokeRect(s.x - w / 2 + 2, ROAD - 98, w - 4, 26); T.text(s.it.hz, s.x, ROAD - 85, { color: '#fff', size: big ? 24 : 12 }); });
         g.drawImage(SPR.bus, BUSX - 60, ROAD - 50 - Math.round(Math.sin(off / 9) * 1.5) - bounce * 8, SPR.bus.width * 2, SPR.bus.height * 2); pax.forEach(p => g.drawImage(SPR.man, p.x, p.y));
-        g.fillStyle = 'rgba(29,35,64,.85)'; g.fillRect(0, 0, W, 74); T.text(target ? target.yale : '', W / 2, 26, { size: 22, color: '#f6c945', sys: true }); T.text(target ? target.en : '', W / 2, 56, { color: '#c9c3b0' });
+        g.fillStyle = 'rgba(29,35,64,.85)'; g.fillRect(0, 0, W, 74); T.text(target ? rom(target.yale) : '', W / 2, 26, { size: 22, color: '#f6c945', sys: true }); T.text(target ? target.en : '', W / 2, 56, { color: '#c9c3b0' });
         if (msgT > 0) T.text(msg, W / 2, 130, { color: '#fff', stroke: '#1d2340' }); }
     };
   },
@@ -160,7 +163,7 @@ const GAMES = {
     const next = () => { if (T.over) return; if (round >= 10) return T.end({ pass: good >= 7, score: good, unit: 'of 10 caught', note: good >= 7 ? '一路順風！ Yātlouh seuhnfūng! Bon voyage!' : 'Look closely at the tone marks: àh, á, ah…' });
       round++; target = pool[(round - 1) % pool.length]; const twin = toneTwin(target), other = pick(pool.filter(p => p !== target)).yale;
       const opts = shuffle([target.yale, twin || pick(pool.filter(p => p !== target)).yale, other]); const sp = 38 + round * 4;
-      buoys = opts.map((y, i) => ({ y: -30 - i * 70, x: 50 + Math.random() * (W - 100), label: y, ok: y === target.yale, vy: sp + Math.random() * 10, ph: Math.random() * 6 })); T.say(target); };
+      buoys = opts.map((y, i) => ({ y: -30 - i * 70, x: 50 + Math.random() * (W - 100), label: rom(y), ok: y === target.yale, vy: sp + Math.random() * 10, ph: Math.random() * 6 })); T.say(target); };
     const move = mx => { x = Math.max(30, Math.min(W - 30, mx)); };
     next();
     return {
@@ -171,7 +174,7 @@ const GAMES = {
         junks.forEach(j => j.x += j.d * 60 * dt); junks = junks.filter(j => j.x > -40 && j.x < W + 40);
         junks.forEach(j => { if (stun <= 0 && Math.abs(j.x - x) < 34 && Math.abs(j.y - 470) < 20) { stun = 1; T.shake = 300; T.sfx('buzz'); msg = '撞船！ Bump!'; msgT = 1; } });
         buoys.forEach(b => { b.y += b.vy * dt; b.x += Math.sin(t * 2 + b.ph) * 18 * dt; if (!b.gone && b.y > 455 && b.y < 485 && Math.abs(b.x - x) < 38) { b.gone = true; if (b.ok) { good++; T.sfx('coin'); T.pop(b.x, b.y, ['#d33a2c', '#f4f1e6', '#f6c945']); T.float('✓', b.x, b.y - 30); msg = '✓ ' + target.yale; msgT = 1; buoys.forEach(z => z.gone = true); setTimeout(() => round && next(), 450); } else { T.sfx('buzz'); T.shake = 250; T.flash(); msg = '✗ ' + b.label; msgT = 1.2; } } });
-        if (buoys.length && buoys.every(b => b.gone || b.y > H + 20) && !buoys.some(b => b.ok && b.gone)) { msg = 'Missed: ' + target.yale; msgT = 1.4; buoys = []; setTimeout(next, 600); }
+        if (buoys.length && buoys.every(b => b.gone || b.y > H + 20) && !buoys.some(b => b.ok && b.gone)) { msg = 'Missed: ' + rom(target.yale); msgT = 1.4; buoys = []; setTimeout(next, 600); }
         T.stat(`${round}/10 · ✓ ${good}`); },
       draw: g => { sky(g, W, 220, [20, 28, 60], [70, 70, 120]); city(g, W, 220, 11, '#262d52', '#f6e39a'); g.fillStyle = '#2b4f7a'; g.fillRect(0, 220, W, H - 220);
         g.fillStyle = '#4d77a6'; for (let i = 0; i < 40; i++) { const yy = 230 + (i * 37) % (H - 230), xx = ((i * 71) + t * 20 * (i % 2 ? 1 : -1)) % (W + 20); g.fillRect((xx + W) % W, yy, 6, 2); }
@@ -216,7 +219,7 @@ const GAMES = {
     const tiles = shuffle(items.flatMap(it => [{ it, face: 'hz' }, { it, face: 'yale' }])).map((o, i) => Object.assign(o, { i, x: GX + (i % 4) * (TW + 8), y: GY + Math.floor(i / 4) * (TH + 8), flip: 0, up: false, gone: false, fly: 0 }));
     const at = (mx, my) => tiles.find(c => !c.gone && mx > c.x && mx < c.x + TW && my > c.y && my < c.y + TH);
     const tap = (mx, my) => { if (lock > 0) return; const c = at(mx, my); if (!c || c.up) return; c.up = true; open.push(c); T.sfx('blip', 1.2); if (c.face === 'hz') T.say(c.it);
-      if (open.length === 2) { moves++; const [a, b] = open; if (a.it === b.it) { pairs++; streak++; T.sfx('coin', 1 + streak * 0.08); setTimeout(() => { [a, b].forEach(z => { z.gone = true; T.pop(z.x + TW / 2, z.y + TH / 2, ['#2f7d4f', '#f7efd9', '#d33a2c']); }); T.float(streak > 1 ? '連 ×' + streak : '✓', b.x + TW / 2, b.y); }, 250); msg = a.it.hz + ' · ' + a.it.yale; msgT = 1.6; open = [];
+      if (open.length === 2) { moves++; const [a, b] = open; if (a.it === b.it) { pairs++; streak++; T.sfx('coin', 1 + streak * 0.08); setTimeout(() => { [a, b].forEach(z => { z.gone = true; T.pop(z.x + TW / 2, z.y + TH / 2, ['#2f7d4f', '#f7efd9', '#d33a2c']); }); T.float(streak > 1 ? '連 ×' + streak : '✓', b.x + TW / 2, b.y); }, 250); msg = a.it.hz + ' · ' + rom(a.it.yale); msgT = 1.6; open = [];
           if (pairs === 8) setTimeout(() => T.end({ pass: true, score: Math.ceil(time) + 40 - moves, unit: 'points', note: '食糊！ Sihkwùh! Mahjong!' }), 700); }
         else { streak = 0; lock = 0.9; T.sfx('buzz'); setTimeout(() => { a.up = b.up = false; open = []; }, 850); } } };
     const wrap = (txt, maxW, size) => { g.font = `bold ${size}px "Helvetica Neue", Arial, sans-serif`; const words = txt.split(' '), lines = []; let cur = ''; for (const w of words) { const tr = cur ? cur + ' ' + w : w; if (g.measureText(tr).width > maxW && cur) { lines.push(cur); cur = w; } else cur = tr; } lines.push(cur); return lines; };
@@ -231,9 +234,9 @@ const GAMES = {
           g.fillStyle = face ? '#f7efd9' : '#2f8a5a'; g.fillRect(-TW / 2, 0, TW, TH); g.fillStyle = face ? '#e2d6b6' : '#24704a'; g.fillRect(-TW / 2, TH - 8, TW, 8); g.strokeStyle = '#14301f'; g.lineWidth = 2; g.strokeRect(-TW / 2 + 1, 1, TW - 2, TH - 2);
           if (!face) { g.fillStyle = '#5cc46a'; for (let k = 0; k < 3; k++) g.fillRect(-4 + (k - 1) * 14, 24, 6, 44); g.fillStyle = '#2f8a5a'; for (let k = 0; k < 3; k++) { g.fillRect(-4 + (k - 1) * 14, 38, 6, 2); g.fillRect(-4 + (k - 1) * 14, 54, 6, 2); } }
           else if (c.face === 'hz') { const L = c.it.hz.length, size = L <= 2 ? 30 : L <= 3 ? 22 : L <= 4 ? 17 : 12; const rows = L <= 4 ? [c.it.hz] : [c.it.hz.slice(0, Math.ceil(L / 2)), c.it.hz.slice(Math.ceil(L / 2))]; rows.forEach((r, k) => T.text(r, 0, TH / 2 - 4 + (k - (rows.length - 1) / 2) * (size + 4), { size, color: '#b0302a' })); }
-          else { const lines = wrap(c.it.yale, TW - 10, 13); lines.forEach((l, k) => T.text(l, 0, TH / 2 - 4 + (k - (lines.length - 1) / 2) * 16, { size: 13, color: '#1d2340', sys: true })); }
+          else { const lines = wrap(rom(c.it.yale), TW - 10, 13); lines.forEach((l, k) => T.text(l, 0, TH / 2 - 4 + (k - (lines.length - 1) / 2) * 16, { size: 13, color: '#1d2340', sys: true })); }
           g.restore(); });
-        g.fillStyle = 'rgba(14,42,28,.9)'; g.fillRect(0, 0, W, 64); T.text('麻雀配對', W / 2, 22, { size: 24 }); T.text('Match each name to its Yale', W / 2, 48, { color: '#c9c3b0' });
+        g.fillStyle = 'rgba(14,42,28,.9)'; g.fillRect(0, 0, W, 64); T.text('麻雀配對', W / 2, 22, { size: 24 }); T.text('Match each name to its ' + ROM_NAME, W / 2, 48, { color: '#c9c3b0' });
         if (msgT > 0) T.text(msg, W / 2, H - 20, { color: '#fff', stroke: '#0e2a1c', sys: true, size: 16 }); }
     };
   },
@@ -241,23 +244,24 @@ const GAMES = {
   typhoon(T) {
     const { W, H, g } = T, pool = mgPool(); let words = [], spawn = 0.5, lives = 3, score = 0, sig = 1, t = 0, msg = '', msgT = 0, drops = [], gust = 0, n = 0;
     const SIG = [[1, 'T1', 22], [3, '▲3', 30], [8, '8', 40], [10, '✚10', 52]];
-    T.bottom(`<div class="tb mg-tb"><div class="tb-row"><input class="tb-in" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" placeholder="Type the Yale…"><button class="btn sm gold" data-b="ok">${ic('check')}</button></div>
-      ${ST.settings.tones ? `<div class="tb-tones">${[[1, 'ā'], [2, 'á'], [3, 'a'], [4, 'àh'], [5, 'áh'], [6, 'ah']].map(([k, l]) => `<button data-tone="${k}"><b>${l}</b>${k}</button>`).join('')}</div>` : ''}</div>`);
+    T.bottom(`<div class="tb mg-tb"><div class="tb-row"><input class="tb-in" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" placeholder="Type the ${ROM_NAME}…"><button class="btn sm gold" data-b="ok">${ic('check')}</button></div>
+      ${ST.settings.tones && !touch ? `<div class="tb-tones">${TONE_KEYS.map(([k, l]) => `<button data-tone="${k}"><b>${l}</b>${JP ? '' : k}</button>`).join('')}</div>` : ''}</div>`);
     const inp = T.bottomEl.querySelector('input'); if (!touch) setTimeout(() => inp.focus(), 50);
-    const fire = () => { const v = inp.value.trim(); if (!v) return; const hit = words.find(w => !w.dead && checkYale(v, w.it).ok);
-      if (hit) { hit.dead = 1; score++; T.sfx('coin', 1 + score * 0.03); T.pop(hit.x, hit.y, ['#f6c945', '#fff', '#9fd3ff'], 22); T.float('+1', hit.x, hit.y - 30); msg = '✓ ' + hit.it.yale; msgT = 1; inp.value = ''; if (score >= 10 && !T.won) { T.won = 1; } }
-      else { const near = words.find(w => !w.dead && base(nfd(v)) === base(nfd(w.it.yale))); T.sfx('buzz'); msg = near ? 'Tones! ' + near.it.yale : '✗ ' + v; msgT = 1.2; } };
+    if (touch) T.onEnd(attachKeyboard(T.bottomEl.querySelector('.tb'), inp, { onEnter: () => fire() }));
+    const fire = () => { const v = inp.value.trim(); if (!v) return; const hit = words.find(w => !w.dead && checkAnswer(v, w.it).ok);
+      if (hit) { hit.dead = 1; score++; T.sfx('coin', 1 + score * 0.03); T.pop(hit.x, hit.y, ['#f6c945', '#fff', '#9fd3ff'], 22); T.float('+1', hit.x, hit.y - 30); msg = '✓ ' + rom(hit.it.yale); msgT = 1; inp.value = ''; if (score >= 10 && !T.won) { T.won = 1; } }
+      else { const near = words.find(w => !w.dead && checkAnswer(v, w.it).tones); T.sfx('buzz'); msg = near ? 'Tones! ' + rom(near.it.yale) : '✗ ' + v; msgT = 1.2; } };
     inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); fire(); } });
-    inp.addEventListener('input', () => { const m = inp.value.match(/([1-6])$/); if (m) { inp.value = inp.value.slice(0, -1); inp.setSelectionRange(inp.value.length, inp.value.length); toneInput(inp, +m[1]); } });
-    T.bottomEl.onpointerdown = e => { const b = e.target.closest('[data-tone],[data-b]'); if (!b) return; e.preventDefault(); if (b.dataset.tone) toneInput(inp, +b.dataset.tone); else fire(); };
+    inp.addEventListener('input', () => { const m = !JP && !touch && inp.value.match(/([1-6])$/); if (m) { inp.value = inp.value.slice(0, -1); inp.setSelectionRange(inp.value.length, inp.value.length); toneInput(inp, +m[1]); } });
+    T.bottomEl.onpointerdown = e => { const b = e.target.closest('[data-tone],[data-b]'); if (!b) return; e.preventDefault(); if (b.dataset.tone) { if (JP) inp.value += b.dataset.tone; else toneInput(inp, +b.dataset.tone); } else fire(); };
     return {
       key: () => false,
       update: dt => { t += dt; msgT -= dt; sig = score >= 9 ? 3 : score >= 6 ? 2 : score >= 3 ? 1 : 0; const sp = SIG[sig][2]; gust = Math.sin(t * 0.7) * (8 + sig * 10) + (Math.random() - 0.5) * sig * 6;
         if ((spawn -= dt) <= 0) { const it = pool[n++ % pool.length]; words.push({ it, x: 40 + Math.random() * (W - 80), y: 70, rot: 0 }); spawn = Math.max(1.6, 4.2 - sig * 0.8); }
-        words.forEach(w => { if (w.dead) { w.y -= 160 * dt; w.x += 120 * dt; w.rot += dt * 6; return; } w.y += sp * dt; w.x = Math.max(30, Math.min(W - 30, w.x + gust * dt)); if (w.y > H - 40) { w.dead = 2; lives--; T.shake = 400; T.sfx('buzz'); msg = '☂ ' + w.it.hz + ' = ' + w.it.yale; msgT = 2; } });
+        words.forEach(w => { if (w.dead) { w.y -= 160 * dt; w.x += 120 * dt; w.rot += dt * 6; return; } w.y += sp * dt; w.x = Math.max(30, Math.min(W - 30, w.x + gust * dt)); if (w.y > H - 40) { w.dead = 2; lives--; T.shake = 400; T.sfx('buzz'); msg = '☂ ' + w.it.hz + ' = ' + rom(w.it.yale); msgT = 2; } });
         words = words.filter(w => !(w.dead && (w.y < -40 || w.dead === 2)));
         if (Math.random() < 0.9) drops.push({ x: Math.random() * W, y: 70, v: 300 + sig * 120 }); drops.forEach(d => { d.y += d.v * dt; d.x += gust * dt * 2; }); drops = drops.filter(d => d.y < H);
-        if (lives <= 0) T.end({ pass: score >= 10, score, unit: 'names blown away', note: score >= 10 ? '十號風球都唔怕！ Even signal 10 can\'t stop you!' : 'Tip: type tone numbers after each syllable — yau4 → yàuh.' });
+        if (lives <= 0) T.end({ pass: score >= 10, score, unit: 'names blown away', note: score >= 10 ? '十號風球都唔怕！ Even signal 10 can\'t stop you!' : JP ? 'Tip: a tone number after each syllable — zung1 waan4.' : 'Tip: type tone numbers after each syllable — yau4 → yàuh.' });
         else if (score >= 14) T.end({ pass: true, score, unit: 'names blown away', note: '天文台都要請你！ The Observatory should hire you!' });
         T.stat(`${'☂'.repeat(lives)} · ${score} · ${SIG[sig][1]}`); },
       draw: g => { sky(g, W, H, [40, 46, 70], [90, 100, 120]); city(g, W, H - 30, 5, '#2a2f48', '#c9b56a'); g.fillStyle = '#20243a'; g.fillRect(0, H - 30, W, 30);
