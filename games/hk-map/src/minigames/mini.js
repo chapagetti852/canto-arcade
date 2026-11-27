@@ -1,3 +1,13 @@
+import { $, ITEMS, LEVELS, esc, ic, pick, shuffle, touch } from "../core/util";
+import { MUSIC, sfx } from "../audio/music";
+import { KEYS, UI, bind, burst, setKEYS } from "../ui/dom";
+import { say } from "../audio/voice";
+import { base, checkYale, nfd, retone, toneInput } from "../yale/yale";
+import { closeModal, openModal } from "../ui/modal";
+import { G } from "../game/G";
+import { save } from "../core/save";
+import { ST, addPoints, levelStats, stars } from "../core/state";
+
 // ===================================================================================================
 // 小遊戲 mini-games: four short, slightly chaotic arcade games built on the names you have met.
 // Each is a gate in the journey (levels 5, 9, 13, 17) and can be replayed from places on the map.
@@ -69,9 +79,9 @@ function runMini(id, opts = {}) {
     g.imageSmoothingEnabled = false;
     const fit = () => { const r = stage.getBoundingClientRect(), s = Math.min(r.width / W, r.height / H); cv.style.width = Math.floor(W * s) + 'px'; cv.style.height = Math.floor(H * s) + 'px'; };
     const ro = new ResizeObserver(fit); ro.observe(stage); fit();
-    const prevKeys = KEYS; KEYS = {}; MUSIC.play('mini');
+    const prevKeys = KEYS; setKEYS({}); MUSIC.play('mini');
     let raf = 0, last = 0, live = false, game = null, closed = false;
-    const finish = res => { if (closed) return; closed = true; cancelAnimationFrame(raf); ro.disconnect(); ov.hidden = true; ov.innerHTML = ''; document.body.classList.remove('mg', 'kb'); KEYS = prevKeys; MUSIC.play(opts.music || 'title'); done(res); };
+    const finish = res => { if (closed) return; closed = true; cancelAnimationFrame(raf); ro.disconnect(); ov.hidden = true; ov.innerHTML = ''; document.body.classList.remove('mg', 'kb'); setKEYS(prevKeys); MUSIC.play(opts.music || 'title'); done(res); };
     const FX = []; let flash = 0, flashC = '#fff';
     const T = { W, H, g, sfx, say, stat: h => stat.innerHTML = h, bottom: h => { bottom.innerHTML = h; }, bottomEl: bottom, end: r => end(r), shake: 0 };
     const text = (s, x, y, o = {}) => { g.font = o.sys ? `bold ${o.size || 14}px "Helvetica Neue", Arial, sans-serif` : `${o.size || 12}px FP, FP2, sans-serif`; g.textAlign = o.align || 'center'; g.textBaseline = 'middle'; if (o.stroke) { g.lineWidth = 4; g.strokeStyle = o.stroke; g.strokeText(s, x, y); } g.fillStyle = o.color || '#f4ead2'; g.fillText(s, x, y); };
@@ -268,3 +278,5 @@ function openMinis() {
   $('#modal-box').querySelectorAll('[data-id]').forEach(b => b.onclick = () => { closeModal(false); runMini(b.dataset.id).then(() => G.home()); });
   bind($('#modal-box'), { x: () => closeModal() });
 }
+
+export { MG, MG_AT, MG_GATE, MGrun, mgPassed, openMinis, runMini };

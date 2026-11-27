@@ -1,7 +1,7 @@
 // Which 香港通 places are ready to go to Anki. Mirrors the map game's own rules
-// (games/hk-map/src/app.js: mastered(), ankiReady()) so both agree on what "learned" means.
+// (games/hk-map/src: mastered(), ankiReady()) so both agree on what "learned" means.
 
-/** [item key, item type, the Anki search that finds its note] — from public/games/hk-map/js/anki-items.json */
+/** [item key, item type, the Anki search that finds its note] — from games/hk-map/public/js/anki-items.json */
 export type MapItem = [key: string, type: string, query: string];
 
 export interface ItemRecord { s?: unknown; l?: number; y?: number; m?: unknown; days?: unknown[] }

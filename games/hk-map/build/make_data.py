@@ -1,7 +1,7 @@
 import json, os
 import os as _os
 HK = _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))          # games/hk-map
-OUT = _os.path.join(HK, "..", "..", "public", "games", "hk-map")              # the built game the arcade serves
+OUT = _os.path.join(HK, "public")                                            # the game's static files (Vite copies them into the build)
 EXT = _os.environ.get("HKMAP_EXTERNAL", "/home/claude/hkmap-external")       # big map-rendering inputs not kept in the repo (see README)
 d=json.load(open(HK+"/data"+'/data4.json',encoding='utf-8'))
 ph=json.load(open(HK+"/data"+'/photos4.json',encoding='utf-8'))

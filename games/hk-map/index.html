@@ -320,7 +320,10 @@ details.more .qrow{grid-template-columns:repeat(2,1fr)}
 .lbx .lp{left:10px;top:50%}.lbx .ln{right:10px;top:50%}.lbx .lx{right:10px;top:calc(10px + var(--safe-t,0px));font-size:20px}
 [data-k] img.ph{cursor:zoom-in}
 .wiki{margin-top:8px;border-top:1px dashed var(--navy3,#3a4270);padding-top:6px;max-height:42vh;overflow:auto}.wiki .wk{margin-bottom:8px}.wiki .wkh{font-size:12px;color:var(--dim)}.wiki .wkh a{color:#f6c945}.wiki .tx{font-size:13px;line-height:1.5}
-#arcade{position:fixed;left:calc(12px + var(--safe-l));bottom:calc(12px + var(--safe-b));z-index:4;font-size:12px;text-decoration:none;opacity:.85}#pad:not([hidden])~#arcade,body.roam #arcade,body.factopen #arcade,body.kb #arcade{display:none!important}
+a.link{text-decoration:none} #arcade{margin-left:14px;color:var(--cream)} #arcade .y{color:var(--gold)}
+/* the open world (?world): a four-way pad on touch screens */
+.dpad{display:grid;grid-template-columns:repeat(3,54px);grid-template-rows:repeat(3,54px);gap:4px}.dpad .btn{padding:0;font-size:20px;min-height:0;touch-action:none}
+.dpad [data-d=up]{grid-column:2;grid-row:1}.dpad [data-d=left]{grid-column:1;grid-row:2}.dpad [data-d=right]{grid-column:3;grid-row:2}.dpad [data-d=down]{grid-column:2;grid-row:3}
 </style>
 </head>
 <body>
@@ -333,7 +336,6 @@ details.more .qrow{grid-template-columns:repeat(2,1fr)}
 <div id="sheet" class="panel" hidden></div>
 <div id="pad" hidden></div>
 <div id="zoom" hidden></div>
-<a id="arcade" class="btn" href="../../" title="Back to the arcade">◀ 機舖 <span class="y">Gēipou</span></a>
 <div id="bao" hidden><img alt=""><div class="bub" hidden></div></div>
 <div id="toasts"></div>
 <div id="modal"><div class="box panel" id="modal-box"></div></div>
@@ -344,7 +346,6 @@ details.more .qrow{grid-template-columns:repeat(2,1fr)}
 <script src="js/tone.js"></script>
 <script src="js/zzfx.js"></script>
 <script src="js/confetti.js"></script>
-<script src="js/phaser.min.js"></script>
-<script src="js/app.js"></script>
+<script type="module" src="./src/main.js"></script>
 </body>
 </html>

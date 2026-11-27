@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
-import { setupCamera, WIDTH } from '../view';
+import { setupCamera, WIDTH, ZOOM } from '../view';
 import { hideBar, touch } from '../answerBar';
 import { playMusic, setMuted } from '../sound';
 import { HEX, isNewPlayer, PAL, save, state, type Mode } from '../state';
-import { confettiBackground, glisten, text } from '../ui';
+import { confettiBackground, FONT_ZH, glisten, text } from '../ui';
 
 const TITLE = [HEX.red, HEX.ink, HEX.gold, HEX.rose];
 
@@ -24,6 +24,7 @@ export class MenuScene extends Phaser.Scene {
     playMusic(this, 'menu');
     const cx = WIDTH / 2;
     confettiBackground(this);
+    this.arcadeLink();
 
     // Title with per-letter colour cycling.
     const title = 'CANTO NUMBERS';
@@ -67,6 +68,30 @@ export class MenuScene extends Phaser.Scene {
 
     this.input.keyboard?.on('keydown-L', () => this.pick('listen'));
     this.input.keyboard?.on('keydown-R', () => this.pick('read'));
+    this.input.keyboard?.on('keydown-ESC', () => this.toArcade());
+  }
+
+  /**
+   * The way back to the arcade room: part of this menu, in the corner where Levels has its
+   * "‹ back", so it never floats over anything in the game. Esc does the same.
+   */
+  private arcadeLink(): void {
+    const label = text(this, 14, 22, '‹ arcade', 12, HEX.dim).setOrigin(0, 0.5);
+    const zh = this.add.text(label.x + label.width + 6, 22, '機舖', {
+      fontFamily: FONT_ZH, fontSize: '12px', color: HEX.dim, resolution: ZOOM,
+    }).setOrigin(0, 0.5);
+    const hit = this.add
+      .zone(8, 22, zh.x + zh.width - 2, 28)
+      .setOrigin(0, 0.5)
+      .setName('arcade-back')
+      .setInteractive({ useHandCursor: true });
+    hit.on('pointerover', () => [label, zh].forEach((t) => t.setColor(HEX.ink)));
+    hit.on('pointerout', () => [label, zh].forEach((t) => t.setColor(HEX.dim)));
+    hit.on('pointerdown', () => this.toArcade());
+  }
+
+  private toArcade(): void {
+    window.location.href = '../../';
   }
 
   private card(cx: number, y: number, m: (typeof MODES)[number]): void {
