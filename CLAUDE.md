@@ -1,6 +1,6 @@
 # Canto Arcade (廣東話機舖 Gwóngdūngwá Gēipou)
 
-Cantonese learning games in one place: a Phaser 4 arcade room you walk around; each machine opens one game. Live at https://chapagetti852.github.io/canto-arcade/ (GitHub Pages, deployed by `.github/workflows/deploy-pages.yml` on every push to `main`, after `npm run verify` passes).
+Cantonese learning games as one world, **Canto Town**. The site's **front page is 香港通's open world** (Hong Kong as 30 m tiles, starting at Tsing Yi); the **Canto Arcade** is a building in it (機舖, by Tsing Yi station) whose room (`arcade/`, Phaser 4) holds the games as machines; Canto Numbers and 香港通's lessons are played from there. Live at https://chapagetti852.github.io/canto-arcade/ (GitHub Pages, deployed by `.github/workflows/deploy-pages.yml` on every push to `main`, after `npm run verify` passes).
 
 **Course context lives in the private repo `chapagetti852/canto-course`** — read its `CLAUDE.md` before any Cantonese content work (Yale only, CLA spellings, lenient answer checking, the owner's Anki setup, the textbook transcriptions). Attach it to the session if it isn't there.
 
@@ -12,6 +12,7 @@ Cantonese learning games in one place: a Phaser 4 arcade room you walk around; e
 ## Layout
 | Path | What |
 |---|---|
+| `arcade/index.html` | The arcade room's page (served at `arcade/`). The front page (`public/index.html`, git-ignored) is made from 香港通's page by `tools/front-page.mjs` during `npm run build:games`; it loads 香港通's files through `<base href="games/hk-map/">`. Canto Town's icon (a pixel map of Hong Kong with a pin on Tsing Yi, from the world map): `public/favicon.ico/.svg/.png`, `apple-touch-icon.png`, `icon-192/512.png`, `icon-maskable-512.png` — all made by `python3 tools/make-icon.py`; home-screen manifest `public/manifest.webmanifest`. |
 | `src/` | The arcade (TypeScript, Phaser 4.2, from the phaser-init scaffold). `scenes/ArcadeScene.ts` is the room; `logic/machines.ts` lists the machines (add a game = one entry); `logic/progress.ts` reads each game's save to show progress on its machine. |
 | `games/hk-map/` | 香港通, the HK map game (an npm workspace, Vite). Code in `src/`, static files (audio, img, data) in `public/`, plan in `docs/ARCHITECTURE.md`. Built into `public/games/hk-map/` (git-ignored) by `npm run build:games`. `npm run hkmap` (Python 3 + fontTools) regenerates its data and pixel font after data or text changes. `build/render_map.py` (the map picture) also needs big external inputs not kept here; see `games/hk-map/README.md`. |
 | `games/canto-numbers/` | Canto Numbers (TypeScript/Phaser, an npm workspace). Built into `public/games/canto-numbers/` by `npm run build:games` (part of `npm run build`; that folder is git-ignored). |
@@ -20,8 +21,8 @@ Cantonese learning games in one place: a Phaser 4 arcade room you walk around; e
 | `tools/subset-zh.py` | Rebuilds the 12px pixel font (Fusion Pixel, OFL) for every character used in `src/`. Run `npm run font` after adding Chinese or Yale text to the arcade. |
 
 ## Commands
-- `npm run dev` — the arcade with hot reload (run `npm run build:games` once first so both games exist). `npm run dev -w games/hk-map` runs 香港通 on its own.
-- `npm run verify` — typecheck + unit tests (arcade, Canto Numbers, 香港通) + production-build playtests (desktop, and the back-button check at iPhone size). The deploy gate.
+- `npm run dev` — with hot reload: the arcade at `/arcade/`, the world at `/` (run `npm run build:games` once first so both games and the front page exist). `npm run dev -w games/hk-map` runs 香港通 on its own.
+- `npm run verify` — typecheck + unit tests (arcade, Canto Numbers, 香港通) + production-build playtests at desktop and iPhone size (the harness opens `arcade/`; scenarios open the world and the games in frames). The deploy gate.
 - In a sandbox without Playwright's own browser: `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=$(ls -d /opt/pw-browsers/chromium_headless_shell-*/*/chrome-headless-shell | head -1) npm run verify`.
 
 ## Anki (private Anki mode)

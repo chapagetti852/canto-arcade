@@ -12,7 +12,8 @@ export default [
   {
     name: 'open 香港通 with ?world',
     action: 'eval',
-    code: `const f = document.createElement('iframe'); f.id = 'game-frame'; f.src = 'games/hk-map/?world';
+    code: `localStorage.removeItem('hkmap-world-v1'); // start at Tsing Yi, not where an earlier scenario left you
+      const f = document.createElement('iframe'); f.id = 'game-frame'; f.src = '../games/hk-map/?world';
       f.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;border:0;z-index:99999';
       document.body.appendChild(f);`,
   },

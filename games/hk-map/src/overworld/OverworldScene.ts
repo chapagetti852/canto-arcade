@@ -12,7 +12,7 @@ import { say } from '../audio/voice';
 import { rom } from '../core/rom';
 import type { Item } from '../types';
 import { CHUNK, Grid, cellOf, chunksFor } from './grid';
-import { DIRS, TILE, type Dir } from './terrain';
+import { DIRS, T, TILE, type Dir } from './terrain';
 import { makeSprites } from './sprites';
 import { openTownMap, rideMenu, setTownMapWhere } from './menus';
 import { sfx } from '../audio/music';
@@ -20,6 +20,14 @@ import { LINES } from '../core/util';
 
 /** cells per second */
 const WALK = 6, RUN = 12;
+/** where you stand in the world, kept between visits (a separate key: it is not progress) */
+const POS_KEY = 'hkmap-world-v1';
+function loadWorldPos(): [number, number] | null {
+  try { const o = JSON.parse(localStorage.getItem(POS_KEY) || 'null'); return o && Number.isInteger(o.px) && Number.isInteger(o.py) ? [o.px, o.py] : null; } catch { return null; }
+}
+function saveWorldPos(px: number, py: number) { try { localStorage.setItem(POS_KEY, JSON.stringify({ px, py })); } catch { /* private mode */ } }
+/** the Canto Arcade, as a place in the world */
+const ARCADE = { k: 'ARCADE', t: 'p', hz: '機舖', yale: 'Gēipou', en: 'Canto Arcade — walk in to play', syl: ['Gēi', 'pou'], x: 0, y: 0, anki: null } as Item;
 /** about how many tiles fit along the screen's shorter side (a Game Boy Advance shows 10 × 15) */
 const TILES_SHORT = 15;
 
@@ -80,7 +88,8 @@ export class OverworldScene extends Phaser.Scene {
 
     // you set out from Tsing Yi station
     const [sx, sy] = cellOf(BY['S:TSY'].x, BY['S:TSY'].y);
-    const start = this.grid.nearestStandable(sx, sy + 2) ?? [sx, sy];
+    // back where you last stood (e.g. at the arcade's door after playing), else by Tsing Yi station
+    const saved = loadWorldPos(), start = saved && this.grid.canStand(saved[0], saved[1]) ? saved : this.grid.nearestStandable(sx, sy + 2) ?? [sx, sy];
     this.px = start[0]; this.py = start[1];
     this.player = this.add.sprite(...this.cellCenter(this.px, this.py), 'pl-down0').setOrigin(0.5, 0.75).setDepth(10);
     this.cameras.main.startFollow(this.player, true);
@@ -91,6 +100,9 @@ export class OverworldScene extends Phaser.Scene {
       const sprite = this.add.image(...this.cellCenter(...cell), 'lm-' + it.t).setDepth(5);
       this.marks.push({ it, cell, sprite });
     }
+    // the Canto Arcade: a building by Tsing Yi station (Maritime Square), the way into the arcade room
+    const ac = this.arcadeCell(sx, sy);
+    if (ac) this.marks.push({ it: ARCADE, cell: ac, sprite: this.add.image(...this.cellCenter(...ac), 'lm-arcade').setDepth(5) });
 
     const kb = this.input.keyboard!;
     this.keys = kb.addKeys({ up: 'UP', down: 'DOWN', left: 'LEFT', right: 'RIGHT', w: 'W', a: 'A', s: 'S', d: 'D', shift: 'SHIFT' }) as typeof this.keys;
@@ -192,6 +204,7 @@ export class OverworldScene extends Phaser.Scene {
   /** after each step: load ground, the district banner, nearby landmarks */
   private onArrive() {
     this.loadChunks();
+    saveWorldPos(this.px, this.py);
     const d = districtAt((this.px + 0.5) / 2, (this.py + 0.5) / 2);
     if (d && d !== this.district) { this.district = d; banner(`<span class="big">${d.hz}</span><br><span style="color:#8a5400">${d.yale}</span><br><span style="color:#6b665b">${d.en}</span>`, 'paper'); }
     let best: Landmark | null = null, bd = 1e9;
@@ -205,7 +218,7 @@ export class OverworldScene extends Phaser.Scene {
   }
 
   private nameTag(m: Landmark): Phaser.GameObjects.Container {
-    const known = stars(m.it) > 0;
+    const known = m.it === ARCADE || stars(m.it) > 0;
     const [x, y] = this.cellCenter(...m.cell);
     const a = this.add.text(0, 0, known ? m.it.hz : '？？？', { fontFamily: 'FP, FP2', fontSize: known ? '24px' : '12px', color: '#241a12', stroke: '#fbf3dd', strokeThickness: 3 }).setOrigin(0.5, 1);
     const parts: Phaser.GameObjects.GameObject[] = [a];
@@ -219,6 +232,7 @@ export class OverworldScene extends Phaser.Scene {
   /** Enter / Space / tapping the landmark you stand by: hear its name; at a station you have met, ride the MTR */
   visit() {
     const it = this.near; if (!it || this.busy) return;
+    if (it === ARCADE) { this.enterArcade(); return; }
     if (!stars(it)) { toast('？？？', '', 'A place you have not met yet — meet it in the lessons first.'); return; }
     say(it);
     if (it.t === 's') { void this.ride(it); return; }
@@ -247,6 +261,32 @@ export class OverworldScene extends Phaser.Scene {
     this.onArrive();
     this.riding = false; this.busy = false;
   }
+
+  /** a town building near Tsing Yi station with a street cell below it (its door), for the arcade */
+  private arcadeCell(sx: number, sy: number): [number, number] | null {
+    for (let r = 3; r <= 12; r++) for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
+      if (Math.max(Math.abs(dx), Math.abs(dy)) !== r || dx < 2) continue; // east of the station, clear of its name tag
+      const x = sx + dx, y = sy + dy;
+      if (!this.grid.canStand(x, y) && this.grid.at(x, y) === T.urban && this.grid.canStand(x, y + 1)) return [x, y];
+    }
+    return null;
+  }
+
+  /** into the Canto Arcade (the arcade room is its own page); the world remembers you are at its door */
+  enterArcade() {
+    if (this.busy) return;
+    this.busy = true;
+    sfx('chime');
+    const door = this.marks.find((m) => m.it === ARCADE)!.cell;
+    saveWorldPos(door[0], door[1] + 1);
+    this.cameras.main.fadeOut(350, 18, 11, 36);
+    this.cameras.main.once('camerafadeoutcomplete', () => {
+      if ((window as unknown as { __noNavigate?: boolean }).__noNavigate) { this.entered = 'arcade'; this.busy = false; return; }
+      location.href = new URL('../../arcade/', document.baseURI).href;
+    });
+  }
+  /** set (instead of leaving the page) when a playtest asks the world not to navigate */
+  entered: string | null = null;
 
   /** M / the HUD's 地圖: the Town Map */
   townMap() {

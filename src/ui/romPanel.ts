@@ -39,5 +39,9 @@ export function setupRomanisation(onChange: (r: Romanisation) => void): void {
   label();
   btn.addEventListener('click', () => (el ? closeRomPanel() : openRomPanel(changed)));
   document.body.appendChild(btn);
+  // the way out: the arcade is a building in the open world (the site's front page); you come out at its door
+  const exit = document.createElement('a');
+  exit.id = 'exit-btn'; exit.href = '../'; exit.textContent = '◀ 出街 out to the street';
+  document.body.appendChild(exit);
   if (!romanisationChosen()) openRomPanel(changed, true);
 }

@@ -96,7 +96,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private toArcade(): void {
-    window.location.href = '../../';
+    window.location.href = '../../arcade/'; // the arcade room (the site's front page is the open world)
   }
 
   private card(cx: number, y: number, m: (typeof MODES)[number]): void {

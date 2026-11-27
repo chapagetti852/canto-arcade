@@ -4,7 +4,7 @@ export default [
   {
     name: 'fetch both games',
     action: 'eval',
-    code: `Promise.all(['games/hk-map/', 'games/hk-map/js/app.js', 'games/hk-map/img/map.png', 'games/canto-numbers/'].map(u => fetch(u).then(r => r.status))).then(s => { window.__status = s.join(','); })`,
+    code: `Promise.all(['../games/hk-map/', '../games/hk-map/js/app.js', '../games/hk-map/img/map.png', '../games/canto-numbers/'].map(u => fetch(u).then(r => r.status))).then(s => { window.__status = s.join(','); })`,
   },
   { name: 'let the fetches land', action: 'wait', ms: 1500 },
   { name: 'every game file is there', action: 'expect', expect: { expression: `window.__status`, equals: '200,200,200,200' } },

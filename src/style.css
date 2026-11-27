@@ -21,3 +21,5 @@ canvas { display: block; touch-action: none; }
 #rom-panel .choices button { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; font: inherit; color: #f5e6c8; background: #2a2440; border: 2px solid #3b2d63; padding: 8px 12px; min-height: 44px; cursor: pointer; }
 #rom-panel .choices button.sel { border-color: #ffd166; } #rom-panel .choices b { color: #ffd166; } #rom-panel .choices small { color: #9a8fc4; font-size: 12px; }
 #rom-panel .x { position: absolute; top: 6px; right: 6px; font: inherit; color: #f5e6c8; background: none; border: 0; cursor: pointer; }
+#exit-btn { position: fixed; top: 10px; left: 10px; z-index: 9; font: 12px PixelZh, monospace; color: #f5e6c8; background: #0b0916d9; border: 2px solid #3b2d63; padding: 3px 8px; text-decoration: none; }
+#rom-btn { top: 44px; }

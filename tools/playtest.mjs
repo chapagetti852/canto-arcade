@@ -12,6 +12,7 @@
  * Options:
  *   --project DIR      Project root (default: cwd)
  *   --url URL          Test an already-running server instead of starting one
+ *   --path PATH        Page to open on the server, relative to its root (e.g. arcade/)
  *   --mode dev|build   dev = `npm run dev`; build = `npm run build` + `npm run preview`
  *                      (default: dev). build mode catches base-path and bundling bugs.
  *   --scenario PATH    .mjs module default-exporting an array of steps, or a directory
@@ -50,6 +51,7 @@ function parseArgs(argv) {
   const opts = {
     project: process.cwd(),
     url: null,
+    path: '',
     mode: 'dev',
     scenario: null,
     out: null,
@@ -69,7 +71,7 @@ function parseArgs(argv) {
     browser: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || null,
   };
   const flags = {
-    '--project': 'project', '--url': 'url', '--mode': 'mode', '--scenario': 'scenario',
+    '--project': 'project', '--url': 'url', '--path': 'path', '--mode': 'mode', '--scenario': 'scenario',
     '--out': 'out', '--settle': 'settle', '--timeout': 'timeout',
     '--viewport': 'viewport', '--device': 'device',
     '--repeat': 'repeat', '--seed': 'seed', '--slowmo': 'slowmo', '--browser': 'browser',
@@ -619,6 +621,7 @@ async function main() {
     server = await startServer(opts);
     url = server.url;
   }
+  if (opts.path) url = new URL(opts.path, url.endsWith('/') ? url : url + '/').href;
   log(`\n${C.cyan}=== Phaser 4 Playtest ===${C.off}`);
   log(`URL:     ${url}`);
   log(`Mode:    ${opts.mode}${opts.device ? ` (device: ${opts.device})` : ''}`);

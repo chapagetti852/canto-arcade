@@ -40,6 +40,9 @@ export default defineConfig({
     // Phaser alone is ~1.2 MB minified; don't warn about the engine itself.
     chunkSizeWarningLimit: 2000,
     rolldownOptions: {
+      // The site: the open world (香港通) is the front page, built into public/index.html by
+      // `npm run build:games` (tools/front-page.mjs); the arcade room lives at arcade/.
+      input: { arcade: 'arcade/index.html' },
       output: {
         // Phaser in its own chunk: its hash only changes when Phaser is upgraded, so
         // returning players keep it cached across your patches.

@@ -22,7 +22,7 @@ export function ankiMode(): boolean {
 let items: MapItem[] | null = null;
 async function mapItems(): Promise<MapItem[]> {
   if (items) return items;
-  const got = (await (await fetch('games/hk-map/js/anki-items.json')).json()) as MapItem[];
+  const got = (await (await fetch('../games/hk-map/js/anki-items.json')).json()) as MapItem[];
   items = got;
   return got;
 }

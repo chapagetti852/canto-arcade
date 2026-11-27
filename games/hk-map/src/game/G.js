@@ -47,7 +47,7 @@ const G = {
         <span class="pgbar"><i style="width:${100 * (S.met + S.two) / (2 * S.n)}%"></i></span>
         <span class="cgo">${ic('play')}<b>${nx.zh}</b><span>${nx.yale} · ${nx.sub}</span></span>
       </button>
-      <div class="row lnk"><button class="link" data-a="journey">${ic('flag')} All levels</button><a class="link" id="arcade" href="../../" title="Back to the arcade">◀ 機舖 <span class="y">Gēipou</span></a><span class="spacer"></span><span class="en">${R[1]} ${R[2]} · ${ic('fire')}${streak()}</span></div>
+      <div class="row lnk"><button class="link" data-a="journey">${ic('flag')} All levels</button><a class="link" id="arcade" href="../../arcade/" title="Back to the arcade">◀ 機舖 <span class="y">Gēipou</span></a><span class="spacer"></span><span class="en">${R[1]} ${R[2]} · ${ic('fire')}${streak()}</span></div>
       <div class="xp"><i style="width:${pct}%"></i></div>
       <div class="qrow">
         <button class="btn" data-a="practice" ${seen ? '' : 'disabled'}>${ic('target')}<span class="lbl"><b>練習</b><small>Practice${due ? ' · ' + due : ''}</small></span></button>
