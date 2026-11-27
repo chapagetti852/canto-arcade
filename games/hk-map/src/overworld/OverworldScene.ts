@@ -14,6 +14,9 @@ import type { Item } from '../types';
 import { CHUNK, Grid, cellOf, chunksFor } from './grid';
 import { DIRS, TILE, type Dir } from './terrain';
 import { makeSprites } from './sprites';
+import { openTownMap, rideMenu, setTownMapWhere } from './menus';
+import { sfx } from '../audio/music';
+import { LINES } from '../core/util';
 
 /** cells per second */
 const WALK = 6, RUN = 12;
@@ -46,6 +49,10 @@ export class OverworldScene extends Phaser.Scene {
   private keys!: Record<'up' | 'down' | 'left' | 'right' | 'w' | 'a' | 's' | 'd' | 'shift', Phaser.Input.Keyboard.Key>;
   private walkT = 0;
   private padDir: Dir | null = null;
+  /** a menu (搭港鐵, the Town Map) or a ride is on: no walking */
+  busy = false;
+  riding = false;
+  private closeMap: (() => void) | null = null;
   private camKey = '';
 
   constructor() { super('overworld'); }
@@ -88,6 +95,7 @@ export class OverworldScene extends Phaser.Scene {
     const kb = this.input.keyboard!;
     this.keys = kb.addKeys({ up: 'UP', down: 'DOWN', left: 'LEFT', right: 'RIGHT', w: 'W', a: 'A', s: 'S', d: 'D', shift: 'SHIFT' }) as typeof this.keys;
     kb.on('keydown-ENTER', () => this.visit()); kb.on('keydown-SPACE', () => this.visit());
+    kb.on('keydown-M', () => this.townMap());
     this.input.on('pointerup', (p: Phaser.Input.Pointer) => {
       if (p.getDistance() > 8) return;
       const wp = this.cameras.main.getWorldPoint(p.x, p.y), cx = Math.floor(wp.x / TILE), cy = Math.floor(wp.y / TILE);
@@ -164,7 +172,7 @@ export class OverworldScene extends Phaser.Scene {
     if (camKey !== this.camKey) { this.camKey = camKey; this.loadChunks(); }
     if (!this.ready) return;
     this.walkT += dt;
-    if (this.moving) return;
+    if (this.moving || this.busy) return;
     let dir = this.inputDir();
     if (dir) this.route = []; else if (this.route.length) dir = this.route.shift()!;
     if (!dir) { this.player.setTexture(this.frame(0)); return; }
@@ -208,10 +216,45 @@ export class OverworldScene extends Phaser.Scene {
     return this.add.container(x, y - TILE * 0.6, parts).setDepth(20).setScale(1 / z);
   }
 
-  /** Enter / Space / tapping the landmark you stand by: hear its name */
+  /** Enter / Space / tapping the landmark you stand by: hear its name; at a station you have met, ride the MTR */
   visit() {
-    const it = this.near; if (!it) return;
-    if (stars(it)) { say(it); toast(it.hz, it.yale, it.en); } else toast('？？？', '', 'A place you have not met yet — meet it in the lessons first.');
+    const it = this.near; if (!it || this.busy) return;
+    if (!stars(it)) { toast('？？？', '', 'A place you have not met yet — meet it in the lessons first.'); return; }
+    say(it);
+    if (it.t === 's') { void this.ride(it); return; }
+    toast(it.hz, it.yale, it.en);
+  }
+
+  /** 搭港鐵: choose a station you have met, ride (a fade in the line's colour), come out on its doorstep */
+  async ride(from: Item) {
+    this.busy = true; this.route = []; this.padDir = null;
+    const to = await rideMenu(from);
+    if (!to) { this.busy = false; return; }
+    this.riding = true;
+    const color = Phaser.Display.Color.HexStringToColor(LINES[to.lines?.[0] ?? '']?.color ?? '#d8231f');
+    sfx('chime');
+    toast('搭港鐵', 'Daap Góngtit', 'To ' + to.en);
+    const cam = this.cameras.main;
+    cam.fadeOut(400, color.red, color.green, color.blue);
+    await new Promise<void>((r) => cam.once('camerafadeoutcomplete', () => r()));
+    const [cx, cy] = cellOf(to.x, to.y), door = this.grid.nearestStandable(cx, cy + 1, 12) ?? [cx, cy];
+    this.px = door[0]; this.py = door[1]; this.facing = 'down';
+    this.player.setPosition(...this.cellCenter(this.px, this.py)).setTexture(this.frame(0));
+    this.loadChunks();
+    await new Promise<void>((r) => this.time.delayedCall(700, () => r()));
+    cam.fadeIn(500, color.red, color.green, color.blue);
+    toast('下一站：' + to.hz, 'Hah yāt jaahm: ' + to.yale, to.en);
+    this.onArrive();
+    this.riding = false; this.busy = false;
+  }
+
+  /** M / the HUD's 地圖: the Town Map */
+  townMap() {
+    if (this.closeMap) { this.closeMap(); return; }
+    if (this.busy) return;
+    this.busy = true; this.route = []; this.padDir = null;
+    this.closeMap = openTownMap(this.px, this.py, this.grid.w, this.grid.h, () => { this.closeMap = null; this.busy = false; });
+    if (this.district) setTownMapWhere(`${this.district.hz} ${this.district.yale}`);
   }
 
   /** where the playtest can step without real input */

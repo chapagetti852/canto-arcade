@@ -9,7 +9,7 @@ export function startOverworld(): Phaser.Game {
   document.body.classList.add('overworld');
   const hud = document.getElementById('hud')!;
   hud.hidden = false;
-  hud.innerHTML = `<a class="iconbtn panel" href="./" title="Back to 香港通" style="text-decoration:none;display:flex;align-items:center;justify-content:center;width:44px">◀</a><div class="bar panel"><span class="big">漫遊</span><span class="y">Maahnyàuh</span><span class="t">· new open world (prototype)</span></div>`;
+  hud.innerHTML = `<a class="iconbtn panel" href="./" title="Back to 香港通" style="text-decoration:none;display:flex;align-items:center;justify-content:center;width:44px">◀</a><div class="bar panel"><span class="big">漫遊</span><span class="y">Maahnyàuh</span><span class="t">· new open world (prototype)</span></div><button class="iconbtn panel" id="ow-map" title="Town Map (M)" style="width:auto;padding:0 10px">地圖</button>`;
   hud.style.pointerEvents = 'auto';
 
   const game = new Phaser.Game({
@@ -17,6 +17,7 @@ export function startOverworld(): Phaser.Game {
     scale: { mode: Phaser.Scale.RESIZE, width: '100%', height: '100%' }, input: { activePointers: 2 }, scene: [OverworldScene],
   });
   (window as unknown as { __hkWorld: () => OverworldScene }).__hkWorld = () => game.scene.getScene('overworld') as OverworldScene;
+  document.getElementById('ow-map')!.addEventListener('click', () => (game.scene.getScene('overworld') as OverworldScene | null)?.townMap());
 
   if (touch) { // a four-way pad, bottom left: hold a direction to walk
     const pad = document.getElementById('pad')!;

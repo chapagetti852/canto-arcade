@@ -140,7 +140,28 @@ not just Tsing Yi: the ground comes from the map picture, so there was no reason
 Known rough edges for phase 2: deep/shallow water boundary is scalloped; town blocks are a uniform grid
 (no tower/estate variety yet); hills are uniform forest with no paths; MTR lines are not shown.
 
-### Phase 2 — The whole territory, stations, Town Map
+### Phase 2 — Stations, the Town Map, a more Hong Kong look
+Status: [x] done — verified 2026-11-27 (`playtest/phase-2-world.mjs`, desktop and iPhone)
+
+Scope (the whole territory is already walkable since phase 1):
+- **Stations you walk into**: at a station you have met, Enter / Space / tapping it opens 搭港鐵: the other
+  stations you have met; pick one, ride (fade, the line's colour), and come out on its doorstep.
+- **Town Map** (M, or the HUD's 地圖 button): today's map picture with the MTR lines, every station (met
+  ones bright), and where you are. The schematic belongs here, not under your feet.
+- **Look**: smooth shallow/deep water; public-housing estate towers (the cross-shaped blocks) among the
+  town blocks; tower blocks taller-looking than low-rise.
+
+| Exit condition | Playtest assertion | Kind |
+|---|---|---|
+| Ride the MTR between met stations | by Tsing Yi, Enter → 搭港鐵 lists Central; choose it → within 3 cells of Central's station | auto ✓ |
+| Unmet stations can't be ridden to | 搭港鐵 lists only met stations | auto ✓ |
+| Town Map opens and shows you | M → the Town Map is open; your marker is at your cell; Esc closes it | auto ✓ |
+| Hong Kong look | — | human |
+
+Also done: diagonal roads drawn as even 45° bands (no staircases, no kerbs across the run); shallow vs deep
+water by true distance from land; about one town block in five is a public-housing estate (two cross-shaped
+towers on a plaza, with long shadows). Still to come: hill paths (needs trail data), MTR viaducts above ground.
+
 ### Phase 3 — Modes move into the world (chapters & badges, practice, rush, rides, mini-games, 圖鑑)
 
 Detailed when we reach them.

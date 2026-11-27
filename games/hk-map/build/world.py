@@ -106,7 +106,7 @@ for _ in range(2):
 
 # shallow sea: the water within 5 cells (150 m) of land
 land = ~np.isin(cls, [C['deep'], C['sea']])
-cls[(cls == C['deep']) & nd.binary_dilation(land, iterations=5)] = C['sea']
+cls[(cls == C['deep']) & (nd.distance_transform_edt(~land) <= 5.5)] = C['sea']   # true distance: round contours, not diamonds
 
 Image.fromarray(cls.astype(np.uint8), 'L').save(HK + '/public/img/world.png', optimize=True)
 u, n = np.unique(cls, return_counts=True)
