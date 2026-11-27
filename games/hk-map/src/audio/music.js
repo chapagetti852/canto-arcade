@@ -1,5 +1,5 @@
-import { save } from "../core/save.js";
-import { ST } from "../core/state.js";
+import { save } from "../core/save";
+import { ST } from "../core/state";
 
 // ---------- music (Tone.js) & sound effects (ZzFX) ----------
 const MUSIC = (() => {

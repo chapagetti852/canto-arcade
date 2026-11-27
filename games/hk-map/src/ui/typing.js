@@ -1,12 +1,12 @@
-import { esc, ic, pick, touch } from "../core/util.js";
-import { sfx } from "../audio/music.js";
-import { SAY, baoSay } from "./bao.js";
-import { UI } from "./dom.js";
-import { say } from "../audio/voice.js";
-import { base, checkYale, nfd, toneInput } from "../yale/yale.js";
-import { G } from "../game/G.js";
-import { MAP } from "../scenes/MapScene.js";
-import { ST } from "../core/state.js";
+import { esc, ic, pick, touch } from "../core/util";
+import { sfx } from "../audio/music";
+import { SAY, baoSay } from "./bao";
+import { UI } from "./dom";
+import { say } from "../audio/voice";
+import { base, checkYale, nfd, toneInput } from "../yale/yale";
+import { G } from "../game/G";
+import { MAP } from "../scenes/MapScene";
+import { ST } from "../core/state";
 
 // ---------- the typing panel ----------
 let tb = null, tbGen = 0;

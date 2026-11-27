@@ -93,10 +93,10 @@ state go through small setters; no logic changes. A `window.__hk` hook stays for
 | No module over ~400 lines | line count check | auto |
 
 ### Phase 0c — TypeScript, module by module
-Status: [ ] todo
-
-Scope: rename modules to `.ts` one at a time with real types for the save (`SaveState`), items,
-levels and the scene. `tsc --noEmit` joins `npm run verify`.
+Status: [~] started (2026-11-27): `src/types.ts` (data and save shapes), `globals.d.ts`, and strict TS for
+`core/util`, `core/anki`, `core/state`, `map/geo`, `yale/yale`; unit tests for Yale checking and tone typing
+(`tests/yale.test.ts`); `tsc` and the tests are part of `npm run verify`. The UI, map scene and modes stay JS
+(`allowJs`) until phases 1–3 replace them; new code is TypeScript.
 
 ### Phase 1 — World prototype (Tsing Yi + Kwai Chung)
 Status: [ ] todo

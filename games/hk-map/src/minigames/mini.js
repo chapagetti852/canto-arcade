@@ -1,12 +1,12 @@
-import { $, ITEMS, LEVELS, esc, ic, pick, shuffle, touch } from "../core/util.js";
-import { MUSIC, sfx } from "../audio/music.js";
-import { KEYS, UI, bind, burst, setKEYS } from "../ui/dom.js";
-import { say } from "../audio/voice.js";
-import { base, checkYale, nfd, retone, toneInput } from "../yale/yale.js";
-import { closeModal, openModal } from "../ui/modal.js";
-import { G } from "../game/G.js";
-import { save } from "../core/save.js";
-import { ST, addPoints, levelStats, stars } from "../core/state.js";
+import { $, ITEMS, LEVELS, esc, ic, pick, shuffle, touch } from "../core/util";
+import { MUSIC, sfx } from "../audio/music";
+import { KEYS, UI, bind, burst, setKEYS } from "../ui/dom";
+import { say } from "../audio/voice";
+import { base, checkYale, nfd, retone, toneInput } from "../yale/yale";
+import { closeModal, openModal } from "../ui/modal";
+import { G } from "../game/G";
+import { save } from "../core/save";
+import { ST, addPoints, levelStats, stars } from "../core/state";
 
 // ===================================================================================================
 // 小遊戲 mini-games: four short, slightly chaotic arcade games built on the names you have met.

@@ -1,10 +1,10 @@
 import Phaser from 'phaser';
-import { BY, CAT, DATA, GEO, ITEMS, LINES, isArea } from "../core/util.js";
-import { sfx } from "../audio/music.js";
-import { insets, toast } from "../ui/dom.js";
-import { lineBounds } from "../map/geo.js";
-import { G } from "../game/G.js";
-import { mastered, stars } from "../core/state.js";
+import { BY, CAT, DATA, GEO, ITEMS, LINES, isArea } from "../core/util";
+import { sfx } from "../audio/music";
+import { insets, toast } from "../ui/dom";
+import { lineBounds } from "../map/geo";
+import { G } from "../game/G";
+import { mastered, stars } from "../core/state";
 
 // ---------- the map (Phaser) ----------
 let MAP = null;

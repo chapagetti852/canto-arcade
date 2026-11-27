@@ -1,6 +1,6 @@
-import { $ } from "../core/util.js";
-import { factIt, hideFact } from "./fact.js";
-import { G } from "../game/G.js";
+import { $ } from "../core/util";
+import { factIt, hideFact } from "./fact";
+import { G } from "../game/G";
 
 // ---------- dialogs (the modal box) ----------
 const MODAL = $('#modal'), BOX = $('#modal-box');

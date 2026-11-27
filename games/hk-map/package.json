@@ -7,12 +7,16 @@
     "dev": "vite",
     "build": "vite build",
     "data": "python3 build/make_data.py",
-    "fonts": "python3 build/fonts.py"
+    "fonts": "python3 build/fonts.py",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p ."
   },
   "dependencies": {
     "phaser": "^4.2.1"
   },
   "devDependencies": {
-    "vite": "^8.3.8"
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1",
+    "typescript": "^7.0.2"
   }
 }

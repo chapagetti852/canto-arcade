@@ -1,6 +1,6 @@
-import { ANKI } from "./anki.js";
-import { MAP } from "../scenes/MapScene.js";
-import { DEF_SET, LS, ST, fresh, setST } from "./state.js";
+import { ANKI } from "./anki";
+import { MAP } from "../scenes/MapScene";
+import { DEF_SET, LS, ST, fresh, setST } from "./state";
 
 // ---------- saving: this browser (+ the game folder, Anki mode on desktop Chrome) ----------
 let saveTimer = null, DIR = null, dirOK = false;

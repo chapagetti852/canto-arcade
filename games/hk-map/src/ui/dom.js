@@ -1,7 +1,7 @@
-import { $, esc } from "../core/util.js";
-import { ANKI } from "../core/anki.js";
-import { MUSIC, sfx } from "../audio/music.js";
-import { hideBao, placeBao } from "./bao.js";
+import { $, esc } from "../core/util";
+import { ANKI } from "../core/anki";
+import { MUSIC, sfx } from "../audio/music";
+import { hideBao, placeBao } from "./bao";
 
 // ---------- DOM UI ----------
 const UI = { root: $('#ui'), hud: $('#hud'), sheet: $('#sheet'), side: $('#side'), center: $('#center'), pad: $('#pad'), zoom: $('#zoom'), bao: $('#bao'), toasts: $('#toasts') };

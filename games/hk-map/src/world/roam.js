@@ -1,15 +1,15 @@
 import Phaser from 'phaser';
-import { $, BY, DATA, GEO, ITEMS, esc, ic, isArea } from "../core/util.js";
-import { MUSIC, sfx } from "../audio/music.js";
-import { KEYS, UI, bind, burst, toast } from "../ui/dom.js";
-import { DISTS, districtAt } from "../map/geo.js";
-import { VOICES, sayLine } from "../audio/voice.js";
-import { closeModal, openModal } from "../ui/modal.js";
-import { MGrun } from "../minigames/mini.js";
-import { G } from "../game/G.js";
-import { MAP } from "../scenes/MapScene.js";
-import { save } from "../core/save.js";
-import { ST, addPoints, hashStr, mission, today } from "../core/state.js";
+import { $, BY, DATA, GEO, ITEMS, esc, ic, isArea } from "../core/util";
+import { MUSIC, sfx } from "../audio/music";
+import { KEYS, UI, bind, burst, toast } from "../ui/dom";
+import { DISTS, districtAt } from "../map/geo";
+import { VOICES, sayLine } from "../audio/voice";
+import { closeModal, openModal } from "../ui/modal";
+import { MGrun } from "../minigames/mini";
+import { G } from "../game/G";
+import { MAP } from "../scenes/MapScene";
+import { save } from "../core/save";
+import { ST, addPoints, hashStr, mission, today } from "../core/state";
 
 // ---------- the open world of free roam: neighbours, Pòhpó's cat, street snacks ----------
 function seeded(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }

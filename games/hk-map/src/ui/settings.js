@@ -1,13 +1,13 @@
-import { $, BUNDLED, ITEMS, esc, ic } from "../core/util.js";
-import { ANKI } from "../core/anki.js";
-import { MUSIC } from "../audio/music.js";
-import { bind } from "./dom.js";
-import { audioFor, azure, fileOf, lineFile, lineUrl, playUrl, saveToFolder } from "../audio/voice.js";
-import { BOX, closeModal, openModal } from "./modal.js";
-import { allLines } from "../world/roam.js";
-import { MAP } from "../scenes/MapScene.js";
-import { DIR, SYNC, dbGet, dbSet, dirOK, importState, publicState, reconnectFolder, save, useFolder } from "../core/save.js";
-import { ST, ankiReady, fresh, setST, today } from "../core/state.js";
+import { $, BUNDLED, ITEMS, esc, ic } from "../core/util";
+import { ANKI } from "../core/anki";
+import { MUSIC } from "../audio/music";
+import { bind } from "./dom";
+import { audioFor, azure, fileOf, lineFile, lineUrl, playUrl, saveToFolder } from "../audio/voice";
+import { BOX, closeModal, openModal } from "./modal";
+import { allLines } from "../world/roam";
+import { MAP } from "../scenes/MapScene";
+import { DIR, SYNC, dbGet, dbSet, dirOK, importState, publicState, reconnectFolder, save, useFolder } from "../core/save";
+import { ST, ankiReady, fresh, setST, today } from "../core/state";
 
 // ---------- settings ----------
 let resetArmed = false;

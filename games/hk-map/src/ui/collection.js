@@ -1,13 +1,13 @@
-import { $, ITEMS, LINES, TYPE, esc, ic, isArea, typeColor } from "../core/util.js";
-import { sfx } from "../audio/music.js";
-import { bind } from "./dom.js";
-import { say } from "../audio/voice.js";
-import { BOX, closeModal, openModal } from "./modal.js";
-import { factHTML, setFactIt } from "./fact.js";
-import { photoUrl } from "./photos.js";
-import { cancelTyping } from "./typing.js";
-import { G } from "../game/G.js";
-import { mastered, starStr, stars } from "../core/state.js";
+import { $, ITEMS, LINES, TYPE, esc, ic, isArea, typeColor } from "../core/util";
+import { sfx } from "../audio/music";
+import { bind } from "./dom";
+import { say } from "../audio/voice";
+import { BOX, closeModal, openModal } from "./modal";
+import { factHTML, setFactIt } from "./fact";
+import { photoUrl } from "./photos";
+import { cancelTyping } from "./typing";
+import { G } from "../game/G";
+import { mastered, starStr, stars } from "../core/state";
 
 let colTab = 'all'; // ---------- collection 圖鑑 ----------
 function openCollection(tab) {

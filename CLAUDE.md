@@ -20,7 +20,7 @@ Joseph's Cantonese learning games in one place: a Phaser 4 arcade room you walk 
 
 ## Commands
 - `npm run dev` — the arcade with hot reload (run `npm run build:games` once first so both games exist). `npm run dev -w games/hk-map` runs 香港通 on its own.
-- `npm run verify` — typecheck + unit tests (arcade and Canto Numbers) + production-build playtest. The deploy gate.
+- `npm run verify` — typecheck + unit tests (arcade, Canto Numbers, 香港通) + production-build playtests (desktop, and the back-button check at iPhone size). The deploy gate.
 - In a sandbox without Playwright's own browser: `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=$(ls -d /opt/pw-browsers/chromium_headless_shell-*/*/chrome-headless-shell | head -1) npm run verify`.
 
 ## Anki (private Anki mode)

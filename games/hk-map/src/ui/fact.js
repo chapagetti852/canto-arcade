@@ -1,9 +1,9 @@
-import { $, BY, LINES, TYPE, esc, ic, typeColor } from "../core/util.js";
-import { UI, bind, setSheet, setSide } from "./dom.js";
-import { say } from "../audio/voice.js";
-import { MG, MG_AT } from "../minigames/mini.js";
-import { credit_, photoUrl, photosOf } from "./photos.js";
-import { mastered, starStr, stars } from "../core/state.js";
+import { $, BY, LINES, TYPE, esc, ic, typeColor } from "../core/util";
+import { UI, bind, setSheet, setSide } from "./dom";
+import { say } from "../audio/voice";
+import { MG, MG_AT } from "../minigames/mini";
+import { credit_, photoUrl, photosOf } from "./photos";
+import { mastered, starStr, stars } from "../core/state";
 
 // ---------- fact card ----------
 function factHTML(it) {

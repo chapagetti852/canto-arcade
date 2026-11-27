@@ -1,22 +1,22 @@
 import Phaser from 'phaser';
-import { $, BY, DATA, GEO, ITEMS, LEVELS, LINES, PX_M, esc, ic, isArea, pick, shuffle, sleep, touch, typeColor } from "../core/util.js";
-import { ANKI } from "../core/anki.js";
-import { MUSIC, sfx } from "../audio/music.js";
-import { SAY, baoSay, hideBao, showBao } from "../ui/bao.js";
-import { KEYS, UI, banner, bind, burst, clearUI, setCenter, setHud, setKEYS, setSheet, setSide, show, toast } from "../ui/dom.js";
-import { areaKeyAt, districtAt, inPoly, lineBounds, rideStops } from "../map/geo.js";
-import { say } from "../audio/voice.js";
-import { closeModal, openModal } from "../ui/modal.js";
-import { MG, MG_GATE, openMinis, runMini } from "../minigames/mini.js";
-import { factIt, hideFact, setFactIt, showFact } from "../ui/fact.js";
-import { credit_, photoUrl } from "../ui/photos.js";
-import { askYale, cancelTyping, typebarHTML } from "../ui/typing.js";
-import { KDOWN, PADV, SNACKS, makeWorld, nearestItem, openSnackBook, seaAt, toastMini } from "../world/roam.js";
-import { openCollection } from "../ui/collection.js";
-import { openSettings } from "../ui/settings.js";
-import { MAP } from "../scenes/MapScene.js";
-import { DIR, dirOK, reconnectFolder, save } from "../core/save.js";
-import { MISSIONS, RANKS, ST, addPoints, ankiReady, credit, currentLevel, debit, gatePending, levelStats, mastered, meet, mission, missionsToday, nextStep, rankOf, rec, starStr, stars, streak, today, unlocked, xp } from "../core/state.js";
+import { $, BY, DATA, GEO, ITEMS, LEVELS, LINES, PX_M, esc, ic, isArea, pick, shuffle, sleep, touch, typeColor } from "../core/util";
+import { ANKI } from "../core/anki";
+import { MUSIC, sfx } from "../audio/music";
+import { SAY, baoSay, hideBao, showBao } from "../ui/bao";
+import { KEYS, UI, banner, bind, burst, clearUI, setCenter, setHud, setKEYS, setSheet, setSide, show, toast } from "../ui/dom";
+import { areaKeyAt, districtAt, inPoly, lineBounds, rideStops } from "../map/geo";
+import { say } from "../audio/voice";
+import { closeModal, openModal } from "../ui/modal";
+import { MG, MG_GATE, openMinis, runMini } from "../minigames/mini";
+import { factIt, hideFact, setFactIt, showFact } from "../ui/fact";
+import { credit_, photoUrl } from "../ui/photos";
+import { askYale, cancelTyping, typebarHTML } from "../ui/typing";
+import { KDOWN, PADV, SNACKS, makeWorld, nearestItem, openSnackBook, seaAt, toastMini } from "../world/roam";
+import { openCollection } from "../ui/collection";
+import { openSettings } from "../ui/settings";
+import { MAP } from "../scenes/MapScene";
+import { DIR, dirOK, reconnectFolder, save } from "../core/save";
+import { MISSIONS, RANKS, ST, addPoints, ankiReady, credit, currentLevel, debit, gatePending, levelStats, mastered, meet, mission, missionsToday, nextStep, rankOf, rec, starStr, stars, streak, today, unlocked, xp } from "../core/state";
 
 // ---------- the game ----------
 const G = {

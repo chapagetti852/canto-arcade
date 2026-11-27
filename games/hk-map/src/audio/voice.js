@@ -1,8 +1,8 @@
-import { BUNDLED } from "../core/util.js";
-import { ANKI } from "../core/anki.js";
-import { MUSIC } from "./music.js";
-import { DIR, dbGet, dbSet, dirOK } from "../core/save.js";
-import { ST, hashStr } from "../core/state.js";
+import { BUNDLED } from "../core/util";
+import { ANKI } from "../core/anki";
+import { MUSIC } from "./music";
+import { DIR, dbGet, dbSet, dirOK } from "../core/save";
+import { ST, hashStr } from "../core/state";
 
 // ---------- names spoken: bundled recordings → saved Azure clips → your own Azure key → the device's Cantonese voice ----------
 const fileOf = k => k.replace(':', '_') + '.mp3';

@@ -1,5 +1,5 @@
-import { esc } from "../core/util.js";
-import { UI, rel } from "./dom.js";
+import { esc } from "../core/util";
+import { UI, rel } from "./dom";
 
 // ---------- mascot 包仔 Bāaujái ----------
 const BAO = {

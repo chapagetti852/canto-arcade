@@ -1,9 +1,9 @@
-import { BY, PH, esc } from "../core/util.js";
-import { sfx } from "../audio/music.js";
-import { closeModal, modalOpen } from "./modal.js";
-import { runMini } from "../minigames/mini.js";
-import { hideFact } from "./fact.js";
-import { G } from "../game/G.js";
+import { BY, PH, esc } from "../core/util";
+import { sfx } from "../audio/music";
+import { closeModal, modalOpen } from "./modal";
+import { runMini } from "../minigames/mini";
+import { hideFact } from "./fact";
+import { G } from "../game/G";
 
 // ---------- photos: Wikimedia Commons ----------
 const photoUrl = it => PH[it.k] ? PH[it.k].u : null;
