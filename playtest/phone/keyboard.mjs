@@ -45,6 +45,9 @@ const run = (mode) => [
   { name: `${mode}: what was typed is right`, action: 'expect', expect: { expression: `${frame}.contentWindow.__hk.checkAnswer(window.__typed, { yale: window.__want, syl: ${frame}.contentWindow.__hk.currentTyping() ? ${frame}.contentWindow.__hk.currentTyping().syl : window.__want.split(/\\s+/) }).ok || ${D}.querySelector('.tb-in.ok') !== null || !${frame}.contentWindow.__hk.currentTyping()`, equals: true } },
   { name: `${mode}: accepted (the lesson moved on)`, action: 'expect', expect: { expression: `(() => { const t = ${frame}.contentWindow.__hk.currentTyping(); return !t || t.yale !== window.__want; })()`, equals: true } },
   { name: `${mode}: keyboard`, action: 'screenshot' },
+  // names are spoken from audio clips: let them finish loading before the frame goes (a cut-off download counts as a failed asset)
+  { name: `${mode}: let the voice clips finish`, action: 'waitFor', expression: `${frame}.contentWindow.performance.getEntriesByType('resource').filter(e => e.name.includes('/audio/')).every(e => e.responseEnd > 0)`, timeout: 8000 },
+  { name: `${mode}: and a moment more`, action: 'wait', ms: 1500 },
 ];
 
 export default [
