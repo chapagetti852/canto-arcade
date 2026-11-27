@@ -35,4 +35,5 @@ Every game except Canto Numbers is built around the first learning of Anki cards
 - `playtest/anki.mjs` covers all of this with a stand-in AnkiConnect and gist installed in the page.
 
 ## Working style
+- New games' Anki cards are prepared (and suspended) in Joseph's claude.ai "Cantonese Learning" project, which can reach his Mac; cloud sessions work from `canto-course/anki/anki-snapshot-*.json` and test Anki with stand-ins.
 Use the phaser4-gamedev skills (phaser-coder, phaser-scene, phaser-ui, phaser-playtest, …). Verify in the browser before reporting done. Keep replies to Joseph concise and simple.
