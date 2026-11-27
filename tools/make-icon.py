@@ -103,6 +103,4 @@ for j in range(32):
         if c[3]: rects.append(f'<rect x="{i}" y="{j}" width="{k - i + 1}" height="1" fill="#{c[0]:02x}{c[1]:02x}{c[2]:02x}"/>')
         i = k + 1
 open(f'{OUT}/favicon.svg', 'w').write('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" shape-rendering="crispEdges">' + ''.join(rects) + '</svg>\n')
-home.resize((288, 288), Image.NEAREST).save('/tmp/claude-0/-home-user-canto-arcade/7e9adda2-c0ce-522a-960b-1a7c516ead48/scratchpad/icon64.png')
-small.resize((256, 256), Image.NEAREST).save('/tmp/claude-0/-home-user-canto-arcade/7e9adda2-c0ce-522a-960b-1a7c516ead48/scratchpad/icon32.png')
 print('icons written to', OUT)

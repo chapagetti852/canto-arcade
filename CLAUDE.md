@@ -1,13 +1,13 @@
-# Canto Arcade (廣東話機舖 Gwóngdūngwá Gēipou)
+# Canto Town (with 廣東話機舖 Gwóngdūngwá Gēipou, the Canto Arcade, inside it)
 
-Cantonese learning games as one world, **Canto Town**. The site's **front page is 香港通's open world** (Hong Kong as 30 m tiles, starting at Tsing Yi); the **Canto Arcade** is a building in it (機舖, by Tsing Yi station) whose room (`arcade/`, Phaser 4) holds the games as machines; Canto Numbers and 香港通's lessons are played from there. Live at https://chapagetti852.github.io/canto-arcade/ (GitHub Pages, deployed by `.github/workflows/deploy-pages.yml` on every push to `main`, after `npm run verify` passes).
+Cantonese learning games as one world, **Canto Town**. The site's **front page is 香港通's open world** (Hong Kong as 30 m tiles, starting at Tsing Yi); the **Canto Arcade** is a building in it (機舖, by Tsing Yi station) whose room (`arcade/`, Phaser 4) holds the games as machines; Canto Numbers and 香港通's lessons are played from there. Live at https://chapagetti852.github.io/canto-town/ (repo `chapagetti852/canto-town`, formerly canto-arcade; GitHub Pages, source "GitHub Actions", deployed by `.github/workflows/deploy-pages.yml` on every push to `main`, after `npm run verify` passes).
 
 **Course context lives in the private repo `chapagetti852/canto-course`** — read its `CLAUDE.md` before any Cantonese content work (Yale only, CLA spellings, lenient answer checking, the owner's Anki setup, the textbook transcriptions). Attach it to the session if it isn't there.
 
 ## Hard rules
 - Yale with tone marks is the source everywhere (data, answers, Anki); never Mandarin or simplified characters. Players may choose **Jyutping** instead (asked on the first arcade visit, `canto-romanisation` in localStorage, switchable in each game's settings): it is always derived from the Yale at display/check time by `src/shared/romanisation.ts`, never stored.
 - This repo is **public** and classmates may play: no Anki data, Azure key, GitHub token or textbook text in it. Secrets live only in the owner's browser (localStorage). Anki features appear only in the private Anki mode. Nothing in the games may refer to the owner personally (no "your parish", names, or home): classmates may play.
-- Never break saved progress: games keep their saves in the browser under fixed keys (`hkmapgame-v3` + IndexedDB `hkmapgame` for 香港通, `canto-numbers-v1` for Canto Numbers, `canto-arcade-v1` for the room). The whole site shares one origin, so moving files around is safe; renaming a key is not.
+- Never break saved progress: games keep their saves in the browser under fixed keys (`hkmapgame-v3` + IndexedDB `hkmapgame` for 香港通, `canto-numbers-v1` for Canto Numbers, `canto-arcade-v1` for the room). The whole site shares one origin, so moving files around is safe; renaming a key is not (the repo became canto-town; keys like `canto-arcade-v1` and the gist files keep their old names on purpose). Saves belong to the origin `chapagetti852.github.io`, so they survive the repo rename; the old address /canto-arcade/ is not forwarded.
 
 ## Layout
 | Path | What |
