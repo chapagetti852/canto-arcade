@@ -3,7 +3,7 @@
 An npm workspace built with Vite into `../../public/games/hk-map/` (what the arcade serves; git-ignored) by the root `npm run build:games`. The plan for turning it into one open-world game is in `docs/ARCHITECTURE.md`.
 
 - `index.html` — the page and all its CSS. `__FONT__`/`__FONT2__` are replaced at build by the inlined pixel fonts (`vite.config.ts`).
-- `src/` — the game (ES modules; Phaser from npm).
+- `src/` — the game as ES modules (Phaser from npm); the layout is in `docs/ARCHITECTURE.md`.
 - `public/` — static files copied as they are: `audio/`, `img/`, `js/data.js` + `js/icons.js` (generated), vendored `js/tone.js`, `js/zzfx.js`, `js/confetti.js`, `sw.js` (`__BUILD__` becomes the build version), the manifest.
 - `build/make_data.py` — `data/data4.json` + `data/photos4.json` + `build/*.json` → `public/js/data.js`, `public/js/icons.js`, `public/js/anki-items.json`.
 - `build/fonts.py` — subsets the pixel fonts (`vendor/font-zh`, Fusion Pixel 12px, OFL) to the characters in use → `assets/fp.woff2` (committed; `vendor/fp2.woff2` is the second font).

@@ -40,21 +40,26 @@ State: `ST` stays the single source of truth for progress (same key, same record
 
 ```
 games/hk-map/
-├── index.html                ← template; fonts inlined at build by a Vite plugin
+├── index.html                ← the page and its CSS; fonts inlined at build by a Vite plugin
 ├── public/                   ← audio/, img/, js/ (data.js, icons.js, tone.js, zzfx.js, confetti.js), sw.js, manifest
-├── build/                    ← make_data.py, fonts.py (subset), render_map.py
+├── assets/fp.woff2           ← the subset pixel font (build/fonts.py)
+├── build/                    ← make_data.py, fonts.py, render_map.py
 ├── src/
-│   ├── main.js               ← start(): Phaser game, boot
-│   ├── core/       state, save & sync, anki flag, points/ranks/missions, util ($, esc, pick…)
-│   ├── audio/      music (Tone.js), sfx (ZzFX), voice (clips, Azure, device voice)
+│   ├── main.js               ← start(): the Phaser game, the visual-viewport fix, the playtest hook
+│   ├── core/       util ($, esc, pick, DATA/ITEMS…), anki (flag), state (ST, stars, points, ranks, missions), save (local, folder, gist sync)
+│   ├── audio/      music (Tone.js tunes + ZzFX sfx), voice (clips, Azure, device voice)
 │   ├── yale/       answer checking, tone typing
-│   ├── ui/         dom helpers, Bāaujái, typing panel, fact card, photos & lightbox, modal, collection, settings
+│   ├── ui/         dom (UI, KEYS, toasts, banners), bao, typing, fact, photos (galleries, lightbox, Wikipedia), modal, collection, settings
+│   ├── map/        geo (district/area lookup, line bounds, ride stops)
 │   ├── scenes/     MapScene
 │   ├── game/       G: the modes
-│   ├── world/      free-roam extras (neighbours, cat, snacks)
+│   ├── world/      free-roam extras (neighbours, the cat, snacks) + the walking keys
 │   └── minigames/  the four mini-games
 └── docs/ARCHITECTURE.md
 ```
+
+Shared values that several modules replace are written only through setters in their home module:
+`setST` (core/state), `setKEYS` (ui/dom), `setFactIt` (ui/fact).
 
 Built by Vite into `public/games/hk-map/` (git-ignored, like Canto Numbers), as `index.html` + `js/app.js`
 so the service worker and the arcade's links stay as they are.
@@ -77,7 +82,7 @@ No behaviour change.
 | Looks the same | before/after screenshots compared | human |
 
 ### Phase 0b — Split into modules
-Status: [ ] todo
+Status: [x] done (2026-11-27): 21 modules; the biggest are MapScene (483 lines) and G (396), to be split further as phases 1–3 replace them.
 
 Scope: the one module split along its existing sections (layout above). Cross-module writes to shared
 state go through small setters; no logic changes. A `window.__hk` hook stays for playtests.
