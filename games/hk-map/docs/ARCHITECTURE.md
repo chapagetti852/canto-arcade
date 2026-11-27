@@ -5,7 +5,7 @@ tile-based Hong Kong you walk around like Pokémon, where every activity is foun
 in one pause menu, and new areas open as you earn badges. Executed phase by phase with
 `/phaser-dev`; every phase leaves a working, deployable game.
 
-Decisions taken with Joseph (2026-11-27): 1 tile = 30 m with a fixed camera; tiles in 香港通's own
+Decisions taken with the owner (2026-11-27): 1 tile = 30 m with a fixed camera; tiles in 香港通's own
 code-drawn pixel style; the 20 levels become badges that open up areas; refactor first.
 
 ## 1. Current state (Nov 2026)

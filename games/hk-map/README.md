@@ -10,6 +10,6 @@ An npm workspace built with Vite into `../../public/games/hk-map/` (what the arc
 - `build/world.py` — the open world's ground: `public/img/map.png` read back into one terrain class per 30 m cell → `public/img/world.png` (needs numpy, scipy, Pillow). Re-run after `render_map.py`.
 - Run both: `npm run hkmap` from the repo root (Python 3 + fontTools), after changing data or adding Chinese/Yale text.
 - `build/render_map.py` — redraws `public/img/map.png`, `areas.png`, `cn.png` and the ferry piers/routes (`build/ferries.json`). Needs inputs too big for the repo: the iB5000 coastline GeoJSON (aknopla/hk-terrestrial-geojson) and land/China masks; point `HKMAP_EXTERNAL` at a folder holding `hk-terrestrial-geojson/` and `geo/`. Rarely needed — the map picture is committed.
-- Audio clips live in `public/audio/` (Azure zh-HK; `hkmap_<key>.mp3` names, `ph_<hash>.mp3` voice lines). New lines are recorded from the game's Settings in Joseph's Anki mode.
+- Audio clips live in `public/audio/` (Azure zh-HK; `hkmap_<key>.mp3` names, `ph_<hash>.mp3` voice lines). New lines are recorded from the game's Settings in the private Anki mode.
 - `npm run dev -w games/hk-map` runs the game on its own (port 5174); add `?world` for the open-world prototype (`src/overworld/`). Vite warns that the classic `js/*.js` scripts "can't be bundled": that is expected, they are loaded as they are.
 - More background: `canto-course/games/hk-map-game-notes.md`.

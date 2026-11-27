@@ -307,7 +307,7 @@ const G = {
   roam(focus) {
     const run = G.enter('roam'); MUSIC.play('roam');
     MAP.setRules(it => stars(it) ? true : 'faint', it => stars(it) > 0); MAP.labelMinZ = 2.3;
-    const start = focus || BY['S:TSY']; // always set out from home, Tsing Yi
+    const start = focus || BY['S:TSY']; // you always set out from Tsing Yi
     const tr = MAP.add.image(start.x, start.y, 'tour0').setOrigin(0.5, 1); tr.fixed = 2; MAP.fx.add(tr);
     const bang = MAP.add.text(0, 0, '!', { fontFamily: 'FP, FP2', fontSize: '24px', color: '#c8961e', stroke: '#fbf3dd', strokeThickness: 4 }).setOrigin(0.5, 1).setVisible(false); bang.fixed = 1; MAP.fx.add(bang);
     MAP.cam.setZoom(focus ? 4.5 : 3.2); MAP.followSprite(tr); setTimeout(() => G.alive(run) && MAP.followSprite(tr), 80); MAP.wheelOK = true; document.body.classList.add('roam');

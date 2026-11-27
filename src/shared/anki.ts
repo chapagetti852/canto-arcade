@@ -1,6 +1,6 @@
 // AnkiConnect, the Anki add-on that listens on your Mac at 127.0.0.1:8765. Works from desktop
 // Chrome once https://chapagetti852.github.io is in its webCorsOriginList (Chrome may ask once to
-// let the site reach local devices). Everything here runs only in Joseph's private Anki mode.
+// let the site reach local devices). Everything here runs only in the private Anki mode.
 
 const URL = 'http://127.0.0.1:8765';
 

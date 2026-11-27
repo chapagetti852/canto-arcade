@@ -74,7 +74,7 @@ export class ArcadeScene extends Phaser.Scene {
     if (ankiMode()) this.startAnki();
   }
 
-  // ── Joseph's private Anki mode: sync between devices, then send learned places to Anki ──
+  // ── The private Anki mode: sync between devices, then send learned places to Anki ──
 
   private startAnki(): void {
     this.light = this.add.text(472, 6, 'Anki ○', TXT('#8a8aa0')).setOrigin(1, 0).setDepth(30).setInteractive({ useHandCursor: true });

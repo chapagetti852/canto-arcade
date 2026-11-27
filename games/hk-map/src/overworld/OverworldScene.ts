@@ -70,7 +70,7 @@ export class OverworldScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#34628f');
     this.cameras.main.setRoundPixels(true);
 
-    // set out from home: Tsing Yi station
+    // you set out from Tsing Yi station
     const [sx, sy] = cellOf(BY['S:TSY'].x, BY['S:TSY'].y);
     const start = this.grid.nearestStandable(sx, sy + 2) ?? [sx, sy];
     this.px = start[0]; this.py = start[1];

@@ -46,8 +46,8 @@ describe('sync between devices', () => {
     expect(publicMap({ items: {}, settings: { key: 'SECRET' } })).toEqual({ items: {} });
   });
   it('keeps the best Canto Numbers score from either device', () => {
-    const m = mergeNumbers({ best: { 'read-1': 120 }, muted: true, name: '' }, { best: { 'read-1': 90, 'listen-2': 300 }, muted: false, name: 'Joseph' });
-    expect(m).toEqual({ best: { 'read-1': 120, 'listen-2': 300 }, muted: true, name: 'Joseph' });
+    const m = mergeNumbers({ best: { 'read-1': 120 }, muted: true, name: '' }, { best: { 'read-1': 90, 'listen-2': 300 }, muted: false, name: 'Ah Ming' });
+    expect(m).toEqual({ best: { 'read-1': 120, 'listen-2': 300 }, muted: true, name: 'Ah Ming' });
   });
   it('adds up arcade visits but keeps where you stand', () => {
     expect(mergeArcade({ last: 'hk-map', visits: { 'hk-map': 3 } }, { last: 'canto-numbers', visits: { 'hk-map': 5, 'canto-numbers': 1 } }))

@@ -1,4 +1,4 @@
-// Progress sync between Joseph's own devices, through his secret GitHub gist — the same gist and
+// Progress sync between the owner's own devices, through a secret GitHub gist — the same gist and
 // token the map game has used since November (stored in this browser only, key `hkmap-sync`).
 // One file per game; this keeps the map game's file name and merge rules so both stay compatible.
 import { ARCADE_KEY, HKMAP_KEY, NUMBERS_KEY } from '../logic/progress';
