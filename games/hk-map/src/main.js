@@ -43,7 +43,9 @@ function start() {
   if (vv) { vv.addEventListener('resize', syncVV); vv.addEventListener('scroll', syncVV); }
   addEventListener('focusout', () => setTimeout(syncVV, 120)); addEventListener('focusin', syncVV); addEventListener('resize', syncVV); addEventListener('orientationchange', () => setTimeout(syncVV, 300)); syncVV();
   window.addEventListener('resize', () => setTimeout(placeBao, 60));
-  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+  // offline support: the front page (Canto Town, at the site root) uses the site's worker, 香港通's own page its own
+  const front = !!document.querySelector('meta[name=hk-start][content=world]');
+  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register(front ? '../../sw.js' : 'sw.js', front ? { scope: '../../' } : undefined).catch(() => {});
   document.fonts.load('12px FP', '港鐵Āā').catch(() => {}).finally(() => {
     // ?world: the new open world (phase 1 prototype, docs/ARCHITECTURE.md) instead of the usual game
     if (params.has('world') || document.querySelector('meta[name=hk-start][content=world]')) { document.getElementById('boot')?.remove(); import('./overworld/boot').then(m => { GAME = m.startOverworld(); }); return; }

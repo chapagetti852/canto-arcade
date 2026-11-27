@@ -8,13 +8,13 @@ const W = `${FW}.__hkWorld()`;
 export default [
   { name: 'arcade room opens', action: 'waitFor', expression: `game.scene.isActive('ArcadeScene')`, timeout: 10000 },
   {
-    name: 'the front page, its icons (every format) and manifest',
+    name: 'the front page, its offline worker, its icons (every format) and manifest',
     action: 'eval',
-    code: `Promise.all(['../', '../manifest.webmanifest', '../favicon.ico', '../favicon.svg', '../favicon.png', '../apple-touch-icon.png', '../icon-192.png', '../icon-512.png', '../icon-maskable-512.png'].map(u => fetch(u).then(async r => [r.status, u === '../' ? await r.text() : ''])))
+    code: `Promise.all(['../', '../sw.js', '../manifest.webmanifest', '../favicon.ico', '../favicon.svg', '../favicon.png', '../apple-touch-icon.png', '../icon-192.png', '../icon-512.png', '../icon-maskable-512.png'].map(u => fetch(u).then(async r => [r.status, u === '../' ? await r.text() : ''])))
       .then(rs => { window.__front = rs[0][1]; window.__status = rs.map(r => r[0]).join(','); });`,
   },
   { name: 'fetched', action: 'waitFor', expression: `!!window.__status`, timeout: 5000 },
-  { name: 'all there', action: 'expect', expect: { expression: `window.__status`, equals: '200,200,200,200,200,200,200,200,200' } },
+  { name: 'all there', action: 'expect', expect: { expression: `window.__status`, equals: '200,200,200,200,200,200,200,200,200,200' } },
   { name: 'the front page is the open world, named Canto Town on the home screen', action: 'expect', expect: { expression: `window.__front.includes('<base href="games/hk-map/">') && window.__front.includes('content="world"') && window.__front.includes('content="Canto Town"') && window.__front.includes('<title>Canto Town</title>') && window.__front.includes('../../apple-touch-icon.png')`, equals: true } },
   {
     name: 'open the front page (a new visitor: no saved spot)',
