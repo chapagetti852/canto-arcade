@@ -162,6 +162,12 @@ Also done: diagonal roads drawn as even 45° bands (no staircases, no kerbs acro
 water by true distance from land; about one town block in five is a public-housing estate (two cross-shaped
 towers on a plaza, with long shadows). Still to come: hill paths (needs trail data), MTR viaducts above ground.
 
+### One site, one world (2026-11-27)
+The open world is now the site's front page (no `?world` needed there; `games/hk-map/?world` still works), and
+the Canto Arcade is a building in it by Tsing Yi station: Enter at its door goes to `arcade/`, and the arcade's
+◀ 出街 brings you back to the street at its door (the world keeps where you stand in `hkmap-world-v1`). The HUD's
+課 Lessons opens 香港通's lessons until phase 3 moves them into the world. Tested by `playtest/front-page.mjs`.
+
 ### Phase 3 — Modes move into the world (chapters & badges, practice, rush, rides, mini-games, 圖鑑)
 
 Detailed when we reach them.

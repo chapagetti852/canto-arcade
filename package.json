@@ -9,13 +9,13 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit && npm run typecheck -w games/hk-map",
     "test": "vitest run && npm test -w games/canto-numbers && npm test -w games/hk-map",
-    "playtest": "node tools/playtest.mjs --project . --scenario playtest",
-    "playtest:build": "node tools/playtest.mjs --project . --mode build --scenario playtest",
+    "playtest": "node tools/playtest.mjs --project . --path arcade/ --scenario playtest",
+    "playtest:build": "node tools/playtest.mjs --project . --mode build --path arcade/ --scenario playtest",
     "verify": "npm run typecheck && npm test && npm run playtest:build && npm run playtest:phone",
-    "build:games": "npm run build -w games/canto-numbers -- --outDir ../../public/games/canto-numbers --emptyOutDir && npm run build -w games/hk-map -- --outDir ../../public/games/hk-map --emptyOutDir",
+    "build:games": "npm run build -w games/canto-numbers -- --outDir ../../public/games/canto-numbers --emptyOutDir && npm run build -w games/hk-map -- --outDir ../../public/games/hk-map --emptyOutDir && node tools/front-page.mjs",
     "hkmap": "npm run data -w games/hk-map && npm run fonts -w games/hk-map",
     "font": "python3 tools/subset-zh.py",
-    "playtest:phone": "node tools/playtest.mjs --project . --mode build --device iphone --scenario playtest/phone"
+    "playtest:phone": "node tools/playtest.mjs --project . --mode build --device iphone --path arcade/ --scenario playtest/phone"
   },
   "dependencies": {
     "phaser": "^4.2.1"

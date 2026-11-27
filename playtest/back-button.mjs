@@ -33,7 +33,7 @@ export const PROBE = String.raw`(w) => {
       }
     }
   }
-  const domBacks = [...d.querySelectorAll('a[href="../../"], [data-arcade-back]')].filter(vis);
+  const domBacks = [...d.querySelectorAll('a[href="../../"], a[href="../../arcade/"], [data-arcade-back]')].filter(vis);
   const backs = [...domBacks.map((el) => ({ el, name: label(el), rect: el.getBoundingClientRect() })), ...objs.filter((x) => x.o.name === 'arcade-back')];
   // Candidate pairs: the back link's box cut with each other control's box.
   const sel = 'button, a[href], input, textarea, select, summary, [role=button], [data-a], .btn';
@@ -70,7 +70,7 @@ const SEEN = { items: Object.fromEntries(['S:TSY', 'S:ADM', 'S:TST', 'S:CEN', 'S
 export const GAMES = [
   {
     id: 'hk-map',
-    url: 'games/hk-map/',
+    url: '../games/hk-map/',
     seed: { 'hkmapgame-v3': JSON.stringify(SEEN) },
     ready: `w.__hk && w.document.querySelector('#splash') && !w.document.querySelector('#splash').hidden`,
     screens: [
@@ -97,7 +97,7 @@ export const GAMES = [
   },
   {
     id: 'canto-numbers',
-    url: 'games/canto-numbers/',
+    url: '../games/canto-numbers/',
     seed: {},
     ready: `w.__PHASER_GAME__ && w.__PHASER_GAME__.scene.isActive('Menu')`,
     screens: [

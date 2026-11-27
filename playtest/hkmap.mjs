@@ -9,7 +9,7 @@ export default [
     name: 'an old save, then open 香港通',
     action: 'eval',
     code: `localStorage.setItem('hkmapgame-v3', ${JSON.stringify(JSON.stringify(SAVE))});
-      const f = document.createElement('iframe'); f.id = 'game-frame'; f.src = 'games/hk-map/';
+      const f = document.createElement('iframe'); f.id = 'game-frame'; f.src = '../games/hk-map/';
       f.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;border:0;z-index:99999';
       document.body.appendChild(f);`,
   },

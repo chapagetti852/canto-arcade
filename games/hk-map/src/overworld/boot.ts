@@ -9,7 +9,7 @@ export function startOverworld(): Phaser.Game {
   document.body.classList.add('overworld');
   const hud = document.getElementById('hud')!;
   hud.hidden = false;
-  hud.innerHTML = `<a class="iconbtn panel" href="./" title="Back to 香港通" style="text-decoration:none;display:flex;align-items:center;justify-content:center;width:44px">◀</a><div class="bar panel"><span class="big">漫遊</span><span class="y">Maahnyàuh</span><span class="t">· new open world (prototype)</span></div><button class="iconbtn panel" id="ow-map" title="Town Map (M)" style="width:auto;padding:0 10px">地圖</button>`;
+  hud.innerHTML = `<a class="iconbtn panel" href="${new URL('./', document.baseURI).href}" title="香港通's lessons, quizzes and mini-games" style="text-decoration:none;display:flex;align-items:center;justify-content:center;width:auto;padding:0 8px">課 Lessons</a><div class="bar panel"><span class="big">漫遊</span><span class="y">Maahnyàuh</span><span class="t">· walk to 機舖 by the station for the arcade</span></div><button class="iconbtn panel" id="ow-map" title="Town Map (M)" style="width:auto;padding:0 10px">地圖</button>`;
   hud.style.pointerEvents = 'auto';
 
   const game = new Phaser.Game({

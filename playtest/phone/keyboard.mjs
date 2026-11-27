@@ -28,7 +28,7 @@ const run = (mode) => [
     name: `${mode}: open 香港通 on a phone`,
     action: 'eval',
     code: `localStorage.setItem('hkmapgame-v3', ${JSON.stringify(JSON.stringify(SAVE))}); localStorage.setItem('canto-romanisation', '${mode}');
-      ${frame}?.remove(); const f = document.createElement('iframe'); f.id = 'game-frame'; f.src = 'games/hk-map/';
+      ${frame}?.remove(); const f = document.createElement('iframe'); f.id = 'game-frame'; f.src = '../games/hk-map/';
       f.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;border:0;z-index:99999'; document.body.appendChild(f);`,
   },
   { name: `${mode}: splash`, action: 'waitFor', expression: `(() => { try { return !!${frame}.contentWindow.__hk && !${D}.querySelector('#splash').hidden; } catch (e) { return false; } })()`, timeout: 20000 },

@@ -12,8 +12,8 @@ export interface Machine {
 }
 
 export const MACHINES: Machine[] = [
-  { id: 'hk-map', hz: '香港通', yale: 'Hēunggóng Tūng', en: 'Hong Kong map', path: 'games/hk-map/', color: 0x3fa7d6, x: 104 },
-  { id: 'canto-numbers', hz: '數字', yale: 'Soujih', en: 'Canto Numbers', path: 'games/canto-numbers/', color: 0xe94f37, x: 172 },
+  { id: 'hk-map', hz: '香港通', yale: 'Hēunggóng Tūng', en: 'Hong Kong map', path: '../games/hk-map/', color: 0x3fa7d6, x: 104 },
+  { id: 'canto-numbers', hz: '數字', yale: 'Soujih', en: 'Canto Numbers', path: '../games/canto-numbers/', color: 0xe94f37, x: 172 },
   { id: 'soon-1', hz: '即將推出', yale: 'jīkjēung tēuichēut', en: 'coming soon', path: null, color: 0x4a4f6a, x: 240 },
   { id: 'soon-2', hz: '即將推出', yale: 'jīkjēung tēuichēut', en: 'coming soon', path: null, color: 0x4a4f6a, x: 308 },
   { id: 'soon-3', hz: '即將推出', yale: 'jīkjēung tēuichēut', en: 'coming soon', path: null, color: 0x4a4f6a, x: 376 },

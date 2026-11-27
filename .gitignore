@@ -10,6 +10,8 @@ dist/
 # built by `npm run build:games`
 public/games/canto-numbers/
 public/games/hk-map/
+# the front page, made from 香港通 by tools/front-page.mjs
+public/index.html
 !games/canto-numbers/.env.production
 __pycache__/
 games/hk-map/dist/

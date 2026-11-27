@@ -10,8 +10,8 @@ export default [
   {
     name: 'met Tsing Yi and Central; open the world',
     action: 'eval',
-    code: `localStorage.setItem('hkmapgame-v3', ${JSON.stringify(JSON.stringify(SAVE))});
-      const f = document.createElement('iframe'); f.id = 'game-frame'; f.src = 'games/hk-map/?world';
+    code: `localStorage.setItem('hkmapgame-v3', ${JSON.stringify(JSON.stringify(SAVE))}); localStorage.removeItem('hkmap-world-v1');
+      const f = document.createElement('iframe'); f.id = 'game-frame'; f.src = '../games/hk-map/?world';
       f.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;border:0;z-index:99999'; document.body.appendChild(f);`,
   },
   { name: 'the world is ready', action: 'waitFor', expression: `(() => { try { return ${W}.ready; } catch (e) { return false; } })()`, timeout: 30000 },
