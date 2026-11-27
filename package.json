@@ -11,10 +11,11 @@
     "test": "vitest run && npm test -w games/canto-numbers",
     "playtest": "node tools/playtest.mjs --project . --scenario playtest",
     "playtest:build": "node tools/playtest.mjs --project . --mode build --scenario playtest",
-    "verify": "npm run typecheck && npm test && npm run playtest:build",
+    "verify": "npm run typecheck && npm test && npm run playtest:build && npm run playtest:phone",
     "build:games": "npm run build -w games/canto-numbers -- --outDir ../../public/games/canto-numbers --emptyOutDir",
     "hkmap": "cd games/hk-map && python3 build/make_data.py && python3 build/build.py",
-    "font": "python3 tools/subset-zh.py"
+    "font": "python3 tools/subset-zh.py",
+    "playtest:phone": "node tools/playtest.mjs --project . --mode build --device iphone --scenario playtest/back-button.mjs"
   },
   "dependencies": {
     "phaser": "^4.2.1"
