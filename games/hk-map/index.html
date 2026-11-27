@@ -329,6 +329,13 @@ body.jp #arcade .y{display:none}
 .vk.down{transform:translateY(2px);box-shadow:none;background:var(--navy3)}.vk.tone{background:#3a2f12;border-color:var(--gold);color:var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
 .vk.tone b{font-weight:normal;font-size:18px}.vk.tone small{font-size:11px;color:#d9c48a}.vk.wide{flex:1.6}.vk.space{flex:3}.vk.ok{flex:2}.vk.gold{background:var(--gold);color:var(--ink)}
 body.vkb-on .tb-in{caret-color:transparent}
+@media (max-width:560px){body.overworld #hud .t{display:none}} body.overworld #hud .big{white-space:nowrap}
+/* the open world's screens: 搭港鐵 and the Town Map */
+.ow-menu{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:rgba(8,10,22,.55);padding:calc(10px + var(--safe-t)) 10px calc(10px + var(--safe-b))}.ow-menu[hidden]{display:none}
+.ow-menu .box{width:min(640px,100%);max-height:100%;overflow:auto;padding:16px 18px}.ow-menu .hd{display:flex;align-items:center;gap:8px}.ow-menu .hd h2{margin:0;flex:1}
+.ow-menu .tm{width:min(1100px,100%);height:100%;display:flex;flex-direction:column}.tm-wrap{position:relative;flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+.tm-wrap canvas{image-rendering:pixelated;outline:3px solid var(--edge)}#tm-you{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;background:#e8463c;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 3px rgba(232,70,60,.35);animation:tmp 1s ease-in-out infinite}
+@keyframes tmp{50%{box-shadow:0 0 0 7px rgba(232,70,60,0)}}.tm-inner{position:relative;line-height:0}
 /* the open world (?world): a four-way pad on touch screens */
 .dpad{display:grid;grid-template-columns:repeat(3,54px);grid-template-rows:repeat(3,54px);gap:4px}.dpad .btn{padding:0;font-size:20px;min-height:0;touch-action:none}
 .dpad [data-d=up]{grid-column:2;grid-row:1}.dpad [data-d=left]{grid-column:1;grid-row:2}.dpad [data-d=right]{grid-column:3;grid-row:2}.dpad [data-d=down]{grid-column:2;grid-row:3}

@@ -40,8 +40,23 @@ export function pixelClass(g: Grid, x: number, y: number, px: number, py: number
   // distances from this quarter's outer corner, in pixels (0 = the cell's edge)
   const dx = qx < 0 ? px : TILE - 1 - px, dy = qy < 0 ? py : TILE - 1 - py;
   const H = g.at(x + qx, y), V = g.at(x, y + qy), D = g.at(x + qx, y + qy);
-  // a road turning diagonally: fill the inside of the corner, so diagonal roads run at 45° instead of in steps
-  if (!isRoadish(c) && isRoadish(H) && isRoadish(V) && !isWater(c) && dx + dy < TILE / 2) return H === V ? H : T.road;
+  // a road turning diagonally: fill the half of this cell on the road's side, so a diagonal road is an even
+  // 45° band instead of a staircase of squares (checked against each corner of the cell, not just this quarter)
+  if (!isRoadish(c) && !isWater(c)) for (const [sx, sy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+    const h = g.at(x + sx, y), v = g.at(x, y + sy);
+    if (!isRoadish(h) || !isRoadish(v)) continue;
+    const ex = sx < 0 ? px : TILE - 1 - px, ey = sy < 0 ? py : TILE - 1 - py;
+    if (ex + ey < TILE - 1) return h === v ? h : T.road;
+  }
+  // …and the road's own outer corners: where both sides are off the road, cut the corner at 45° (to the
+  // ground beside it), so both edges of a diagonal road are straight and turns are bevelled
+  if (isRoadish(c)) for (const [sx, sy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+    const h = g.at(x + sx, y), v = g.at(x, y + sy);
+    if (isRoadish(h) || isRoadish(v) || isRoadish(g.at(x + sx, y + sy)) || isWater(h) || isWater(v)) continue;
+    if (!isRoadish(g.at(x - sx, y - sy))) continue; // only on diagonal runs (the road goes on the other way)
+    const ex = sx < 0 ? px : TILE - 1 - px, ey = sy < 0 ? py : TILE - 1 - py;
+    if (ex + ey < TILE / 2 + 1) return h;
+  }
   if (SQUARE.has(c)) return c;
   const L = layer(c);
   if (L < 0) return c;
@@ -59,7 +74,7 @@ export function pixelClass(g: Grid, x: number, y: number, px: number, py: number
 }
 
 const COL = {
-  deep: [52, 98, 143], wave: [86, 134, 178], sea: [70, 122, 170], foam: [226, 240, 244],
+  deep: [60, 108, 156], wave: [92, 140, 184], sea: [72, 124, 172], foam: [226, 240, 244],
   res: [112, 168, 210], resE: [92, 146, 190], pond: [96, 150, 146],
   sand: [240, 226, 166], sandD: [224, 204, 140], edge: [206, 188, 140], rock: [170, 160, 140],
   grass: [150, 186, 108], grassD: [126, 164, 90], grassL: [170, 202, 124],
@@ -206,7 +221,10 @@ function road(g: Grid, c: number, x: number, y: number, px: number, py: number):
   const same = (dx: number, dy: number) => isRoadish(g.at(x + dx, y + dy));
   const L = same(-1, 0), Rr = same(1, 0), U = same(0, -1), D = same(0, 1);
   const motor = c === T.motorway, base = c === T.bridge ? COL.bridge : motor ? COL.motor : COL.tarmac, edge = c === T.bridge ? COL.rail : motor ? COL.motorE : COL.tarmacE;
-  if ((!L && px === 0) || (!Rr && px === 15) || (!U && py === 0) || (!D && py === 15)) return edge;
+  // kerbs where the road ends, except on a side where it carries on diagonally (that side is filled, see pixelClass)
+  const diag = (sx: number, sy: number) => same(sx, sy);
+  const kL = !L && !diag(-1, -1) && !diag(-1, 1), kR = !Rr && !diag(1, -1) && !diag(1, 1), kU = !U && !diag(-1, -1) && !diag(1, -1), kD = !D && !diag(-1, 1) && !diag(1, 1);
+  if ((kL && px === 0) || (kR && px === 15) || (kU && py === 0) || (kD && py === 15)) return edge;
   const line = motor ? COL.motorLine : COL.line;
   if (L && Rr && !U && !D && py === 8 && (px >> 2) % 2 === 0) return line;
   if (U && D && !L && !Rr && px === 8 && (py >> 2) % 2 === 0) return line;
@@ -217,6 +235,7 @@ function road(g: Grid, c: number, x: number, y: number, px: number, py: number):
 function town(g: Grid, c: number, x: number, y: number, px: number, py: number, gx: number, gy: number): RGB {
   const b = blockOf(g, x, y);
   if (!b) return (px === 0 || py === 0) ? COL.kerb : (px === 8 || py === 8) ? COL.paveD : COL.pave; // paving slabs
+  if (c === T.urban && hash(b, 2, 35) < 0.22) return estate(b, x, y, px, py);
   const roof = c === T.industrial ? (py % 3 === 0 ? [186, 178, 188] as RGB : [206, 198, 204] as RGB) : ROOFS[Math.floor(hash(b, 0, 31) * ROOFS.length)];
   const nb = (dx: number, dy: number) => blockOf(g, x + dx, y + dy) === b;
   // a dark outline at the block's edge, a shadow along its bottom and right inside the pavement
@@ -255,3 +274,28 @@ const GRASS = cached(64, 64, (x, y) => tufts(x, y, COL.grass, COL.grassD, COL.gr
 const SCRUB = cached(80, 80, (x, y) => bushes(x, y, COL.scrub, COL.scrubD, 10, 3.2));
 const PARK = cached(112, 112, (x, y) => bushes(x, y, COL.park, COL.parkT, 14, 3.5, COL.parkTD));
 const WOOD = cached(56, 56, trees);
+
+const ESTATE_ROOFS: RGB[] = [[236, 214, 168], [206, 226, 212], [234, 196, 184], [204, 214, 236], [240, 232, 206]];
+const PLAZA: RGB = [204, 198, 184], PLAZA_D: RGB = [188, 182, 168], PLANTER: RGB = [120, 166, 92];
+
+/**
+ * A public-housing estate filling a town block (3 × 4 cells, 48 × 64 px): a paved plaza with planters and two
+ * cross-shaped tower blocks (the "Trident"/"Harmony" plans seen from above), each with its shadow.
+ */
+function estate(b: number, x: number, y: number, px: number, py: number): RGB {
+  const lx = (x - Math.floor(x / 4) * 4 - 1) * TILE + px, ly = (y - Math.floor(y / 5) * 5 - 1) * TILE + py;
+  const roof = ESTATE_ROOFS[Math.floor(hash(b, 3, 36) * ESTATE_ROOFS.length)];
+  const cross = (cx: number, cy: number, dx: number, dy: number) => (Math.abs(dx - cx) <= 15 && Math.abs(dy - cy) <= 5) || (Math.abs(dx - cx) <= 5 && Math.abs(dy - cy) <= 13);
+  const edge = (cx: number, cy: number) => cross(cx, cy, lx, ly) && !(cross(cx, cy, lx - 1, ly) && cross(cx, cy, lx + 1, ly) && cross(cx, cy, lx, ly - 1) && cross(cx, cy, lx, ly + 1));
+  for (const [cx, cy] of [[24, 15], [24, 47]]) {
+    if (cross(cx, cy, lx, ly)) {
+      if (edge(cx, cy)) return shade(roof, 0.55);
+      if (Math.abs(lx - cx) <= 2 && Math.abs(ly - cy) <= 2) return [150, 156, 168]; // the lift room in the middle
+      if ((Math.abs(lx - cx) === 11 || Math.abs(ly - cy) === 9) && (lx + ly) % 2 === 0) return shade(roof, 0.85); // water tanks at the wing ends
+      return roof;
+    }
+    if (cross(cx, cy, lx - 3, ly - 3)) return [150, 146, 136]; // a tall block's shadow, down and right
+  }
+  if ((lx % 12 === 2 || lx % 12 === 3) && (ly % 10 === 2 || ly % 10 === 3)) return PLANTER;
+  return (lx + ly) % 6 === 0 ? PLAZA_D : PLAZA;
+}
