@@ -5,6 +5,7 @@ import { playMusic } from '../sound';
 import { HEX, isNewPlayer, PAL, save, state } from '../state';
 import { LEVELS } from '../yale/items';
 import { confettiBackground, glisten, labelColor, text } from '../ui';
+import { ROM_NAME, rom } from '../rom';
 
 const FILLS = [PAL.red, PAL.white, PAL.gold, PAL.rose, PAL.coral, PAL.white, PAL.red];
 
@@ -25,7 +26,7 @@ export class LevelsScene extends Phaser.Scene {
     const back = text(this, 30, 32, '‹ back', 12, HEX.dim).setOrigin(0, 0.5).setInteractive({ useHandCursor: true });
     back.on('pointerdown', () => this.scene.start('Menu'));
     text(this, cx, 32, listen ? 'listen' : 'read', 22, listen ? HEX.red : HEX.gold);
-    text(this, cx, 62, listen ? 'hear a number, type the digits' : 'see a number, write it in yale', 12, HEX.ink, true);
+    text(this, cx, 62, listen ? 'hear a number, type the digits' : `see a number, write it in ${ROM_NAME}`, 12, HEX.ink, true);
 
     LEVELS.forEach((l, i) => {
       const y = 112 + i * 62;
@@ -37,7 +38,7 @@ export class LevelsScene extends Phaser.Scene {
         this.add.rectangle(cx - 150 + 24, y, 48, 54, fill),
         text(this, cx - 150 + 24, y, String(l.level), 22, labelColor(fill)).setStroke(HEX.bg, 0),
         text(this, cx - 150 + 60, y - 11, l.name, 12, HEX.ink).setOrigin(0, 0.5),
-        text(this, cx - 150 + 60, y + 11, l.example, 11, HEX.dim, true).setOrigin(0, 0.5),
+        text(this, cx - 150 + 60, y + 11, rom(l.example), 11, HEX.dim, true).setOrigin(0, 0.5),
       ];
       parts.slice(2).forEach((p) => p.setDepth(2));
       // A new player arriving from Listen is steered on to level 1.

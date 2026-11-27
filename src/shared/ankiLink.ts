@@ -1,4 +1,4 @@
-// Joseph's private Anki mode: turned on per browser with ?anki (off with ?anki=off), shared with
+// The private Anki mode: turned on per browser with ?anki (off with ?anki=off), shared with
 // the map game's own flag so one switch covers the whole site. Classmates never see any of it.
 import { type MapItem, type MapSave, markSent, readyForAnki, suspendedCardsQuery, today } from '../logic/hkmapAnki';
 import { HKMAP_KEY } from '../logic/progress';

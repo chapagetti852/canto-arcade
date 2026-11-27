@@ -7,6 +7,7 @@ import { COLORS, HEX, PAL, state } from '../state';
 import { checkYale, normalizeYale, parseDigits, parseNumber, type YaleVerdict } from '../yale/check';
 import { LEVELS, pool, randomItem, type Item } from '../yale/items';
 import { confettiBackground, FONT_ZH, text } from '../ui';
+import { JP, answerKey, checkJyutping, rom } from '../rom';
 
 const ROUND_MS = 60_000;
 /** Ignore NEXT for a moment after a miss so a double-tap doesn't skip the review. */
@@ -154,7 +155,7 @@ export class GameScene extends Phaser.Scene {
       const ok = this.item.money ? parseDigits(value) === this.item.value : parseNumber(value) === this.item.value;
       verdict = ok ? 'correct' : 'wrong';
     } else {
-      verdict = checkYale(value, this.item.answers);
+      verdict = JP ? checkJyutping(value, this.item.answers) : checkYale(value, this.item.answers);
     }
     this.answered++;
     if (verdict === 'correct') this.win();
@@ -185,7 +186,7 @@ export class GameScene extends Phaser.Scene {
 
     if (this.listen) {
       this.setPrompt(this.item.display).setColor(HEX.gold);
-      this.reveal.setText(this.item.answers[0]);
+      this.reveal.setText(answerKey(this.item.answers[0]));
     }
     clearInput();
     this.paused = true;
@@ -229,16 +230,17 @@ export class GameScene extends Phaser.Scene {
     const y = this.syllableRow(this.item.answers[0], this.listen ? null : typed, 392);
     if (this.item.alt) {
       const label = this.item.form === 'contracted' ? 'full form' : 'short form';
-      add(text(this, cx, y + 8, `${label}: ${this.item.alt}`, 12, HEX.dim, true).setWordWrapWidth(320));
+      add(text(this, cx, y + 8, `${label}: ${answerKey(this.item.alt)}`, 12, HEX.dim, true).setWordWrapWidth(320));
     }
     if (this.item.answers.length > 1) {
-      add(text(this, cx, y + 30, `also ok: ${this.item.answers[1]}`, 12, HEX.dim, true));
+      add(text(this, cx, y + 30, `also ok: ${answerKey(this.item.answers[1])}`, 12, HEX.dim, true));
     }
     add(text(this, cx, 560, 'tap next or press enter', 9, HEX.dim));
   }
 
   /** The correct answer, word by word, with the words that differ from `typed` in gold. Returns the bottom y. */
-  private syllableRow(answer: string, typed: string | null, top: number): number {
+  private syllableRow(answerYale: string, typed: string | null, top: number): number {
+    const answer = answerKey(answerYale);
     const units = answer.split(/\s+/);
     const theirs = typed ? typed.normalize('NFC').toLowerCase().trim().split(/[\s-]+/) : [];
     let k = 0;
@@ -290,7 +292,7 @@ export class GameScene extends Phaser.Scene {
     const z = this.add.text(x, y, zh, {
       fontFamily: FONT_ZH, fontSize: '32px', color, stroke: HEX.bg, strokeThickness: 6, resolution: ZOOM,
     }).setOrigin(0.5).setDepth(10);
-    const r = text(this, x, y + 28, yale, 14, color, true).setDepth(10);
+    const r = text(this, x, y + 28, rom(yale), 14, color, true).setDepth(10);
     const angle = Phaser.Math.Between(-18, 18);
     [z, r].forEach((o) => o.setAngle(angle).setScale(0.3));
     this.tweens.add({ targets: [z, r], scale: 1.3, duration: 160, ease: 'Back.Out' });

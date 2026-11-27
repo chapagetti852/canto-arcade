@@ -12,7 +12,7 @@ const CSP = [
   "img-src 'self' data: blob:",
   "media-src 'self' data: blob:",
   "font-src 'self' data:",
-  // AnkiConnect on Joseph's Mac and his private progress gist (both used only in his Anki mode)
+  // AnkiConnect on the owner's Mac and the private progress gist (both used only in Anki mode)
   "connect-src 'self' data: blob: http://127.0.0.1:8765 https://api.github.com",
   "worker-src 'self' blob:",
   "object-src 'none'",

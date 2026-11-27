@@ -279,14 +279,14 @@ body.short .stop .hz{font-size:24px}
 body.short .tb-hint{font-size:12px}
 body.short .home .logo{font-size:48px}
 /* keyboard open on a phone: only what you need to type */
-body.kb #bao,body.kb #zoom,body.kb #side,body.kb #pad,body.kb #toasts{display:none!important}
-body.kb .stop .thumb,body.kb .fact,body.kb .meta,body.kb .band{display:none!important}
-body.kb .stop .hz{font-size:24px!important}
-body.kb #sheet{padding:8px 10px;max-height:calc(100% - 52px - var(--safe-t));bottom:6px}
-body.kb #hud{top:6px} body.kb #hud .en{display:none} body.kb #hud .q,body.kb #hud .bar{padding:4px 8px;min-height:0} body.kb #hud .iconbtn{min-height:36px}
-body.kb .tb{margin-top:6px;padding-top:6px} body.kb .tb-hint{font-size:12px;min-height:0} body.kb .tb-msg{min-height:0;margin-top:4px}
-body.kb .tb-tones{margin-top:4px} body.kb .tb-tones button{min-height:30px;font-size:10px} body.kb .tb-tones button b{font-size:16px}
-body.kb .tb-in{padding:6px 8px}
+body:is(.kb,.vkb-on) #bao,body:is(.kb,.vkb-on) #zoom,body:is(.kb,.vkb-on) #side,body:is(.kb,.vkb-on) #pad,body:is(.kb,.vkb-on) #toasts{display:none!important}
+body:is(.kb,.vkb-on) .stop .thumb,body:is(.kb,.vkb-on) .fact,body:is(.kb,.vkb-on) .meta,body:is(.kb,.vkb-on) .band{display:none!important}
+body:is(.kb,.vkb-on) .stop .hz{font-size:24px!important}
+body:is(.kb,.vkb-on) #sheet{padding:8px 10px;max-height:calc(100% - 52px - var(--safe-t));bottom:6px}
+body:is(.kb,.vkb-on) #hud{top:6px} body:is(.kb,.vkb-on) #hud .en{display:none} body:is(.kb,.vkb-on) #hud .q,body:is(.kb,.vkb-on) #hud .bar{padding:4px 8px;min-height:0} body:is(.kb,.vkb-on) #hud .iconbtn{min-height:36px}
+body:is(.kb,.vkb-on) .tb{margin-top:6px;padding-top:6px} body:is(.kb,.vkb-on) .tb-hint{font-size:12px;min-height:0} body:is(.kb,.vkb-on) .tb-msg{min-height:0;margin-top:4px}
+body:is(.kb,.vkb-on) .tb-tones{margin-top:4px} body:is(.kb,.vkb-on) .tb-tones button{min-height:30px;font-size:10px} body:is(.kb,.vkb-on) .tb-tones button b{font-size:16px}
+body:is(.kb,.vkb-on) .tb-in{padding:6px 8px}
 /* fact cards: gallery, name meaning, more */
 .fcard .gal{display:flex;gap:4px;margin-top:4px} .fcard .gal img{width:56px;height:38px;object-fit:cover;border:2px solid transparent;cursor:pointer;opacity:.7} .fcard .gal img.on{border-color:var(--ink);opacity:1}
 .nm{margin-top:8px;padding:6px 8px;background:rgba(138,84,0,.08);border-left:3px solid #8a5400;line-height:1.6} .nm b{font-weight:normal;color:#8a5400;margin-right:4px}
@@ -307,7 +307,7 @@ body.kb .tb-in{padding:6px 8px}
 .mg-bottom{display:flex;gap:8px;padding-top:8px} .mg-bottom:empty{display:none} .mg-big{flex:1;font-size:24px;min-height:64px} .mg-big small{font-size:12px;margin-left:6px}
 .mg-tb{flex:1;margin:0;padding:0;border:none}
 body.mg #bao,body.mg #zoom,body.mg #pad,body.mg #visit{display:none!important}
-body.kb.mg .mg-top{padding-bottom:2px} body.kb.mg .mg-t b{font-size:12px}
+body:is(.kb,.vkb-on).mg .mg-top{padding-bottom:2px} body:is(.kb,.vkb-on).mg .mg-t b{font-size:12px}
 .mglist{display:grid;gap:8px;margin-top:10px} .mgrow{justify-content:flex-start;text-align:left} .mgrow .lbl{align-items:flex-start}
 .metro .gate{color:var(--gold);white-space:nowrap;font-size:12px}
 details.more .qrow{grid-template-columns:repeat(2,1fr)}
@@ -321,6 +321,14 @@ details.more .qrow{grid-template-columns:repeat(2,1fr)}
 [data-k] img.ph{cursor:zoom-in}
 .wiki{margin-top:8px;border-top:1px dashed var(--navy3,#3a4270);padding-top:6px;max-height:42vh;overflow:auto}.wiki .wk{margin-bottom:8px}.wiki .wkh{font-size:12px;color:var(--dim)}.wiki .wkh a{color:#f6c945}.wiki .tx{font-size:13px;line-height:1.5}
 a.link{text-decoration:none} #arcade{margin-left:14px;color:var(--cream)} #arcade .y{color:var(--gold)}
+/* Jyutping is longer than Yale: the home menu's way back to the arcade shows just 機舖 */
+body.jp #arcade .y{display:none}
+/* the in-game keyboard (phones): tone keys on top, the romanisation's letters in QWERTY places, 44 px+ keys */
+.vkb{margin-top:8px;display:flex;flex-direction:column;gap:5px;padding-bottom:var(--safe-b);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.vkr{display:flex;gap:4px}.vk{flex:1;min-width:0;height:46px;border:2px solid var(--edge);background:var(--navy2);color:var(--cream);font:16px var(--font);padding:0;touch-action:manipulation;box-shadow:0 3px 0 rgba(5,7,15,.6)}
+.vk.down{transform:translateY(2px);box-shadow:none;background:var(--navy3)}.vk.tone{background:#3a2f12;border-color:var(--gold);color:var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.vk.tone b{font-weight:normal;font-size:18px}.vk.tone small{font-size:11px;color:#d9c48a}.vk.wide{flex:1.6}.vk.space{flex:3}.vk.ok{flex:2}.vk.gold{background:var(--gold);color:var(--ink)}
+body.vkb-on .tb-in{caret-color:transparent}
 /* the open world (?world): a four-way pad on touch screens */
 .dpad{display:grid;grid-template-columns:repeat(3,54px);grid-template-rows:repeat(3,54px);gap:4px}.dpad .btn{padding:0;font-size:20px;min-height:0;touch-action:none}
 .dpad [data-d=up]{grid-column:2;grid-row:1}.dpad [data-d=left]{grid-column:1;grid-row:2}.dpad [data-d=right]{grid-column:3;grid-row:2}.dpad [data-d=down]{grid-column:2;grid-row:3}

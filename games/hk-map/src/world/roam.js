@@ -49,7 +49,7 @@ function makeWorld(tr, run) {
   const F = ST.flags, day = today(), R = seeded(hashStr('npc')), people = [], WB = {};
   F.snk = F.snk || {}; F.rv = F.rv || {};
   const bubble = (o, ph, ms = 3600) => { if (o.bub) o.bub.destroy(); const t = MAP.add.text(o.s.x, o.s.y - o.s.displayHeight - 0.5, ph[0] + '\n' + ph[1], { fontFamily: '"Helvetica Neue", Arial, sans-serif', fontSize: '12px', color: '#1d2340', backgroundColor: '#fbf3dd', padding: { x: 5, y: 3 }, align: 'center', resolution: 3 }).setOrigin(0.5, 1); t.fixed = 1.2; MAP.fx.add(t); o.bub = t; o.bubT = ms; };
-  // neighbours: a couple in every district, a few more around home in Tsing Yi
+  // neighbours: a couple in every district, a few more around Tsing Yi, where you set out
   for (const d of DISTS) { const g = GEO[d.k]; if (!g || !g.poly) continue; const xs = g.poly.map(p => p[0]), ys = g.poly.map(p => p[1]);
     for (let n = 0, k = 0; n < 2 && k < 400; k++) { const x = Math.min(...xs) + R() * (Math.max(...xs) - Math.min(...xs)), y = Math.min(...ys) + R() * (Math.max(...ys) - Math.min(...ys)); if (MAP.isWater(x, y) || districtAt(x, y) !== d || (!MAP.isUrban(x, y) && k < 300)) continue; people.push({ x, y }); n++; } }
   const home = BY['S:TSY']; for (let n = 0; n < 3; n++) people.push(landNear(R, home.x, home.y, 40));
