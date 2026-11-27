@@ -195,6 +195,7 @@ async function startServer(opts) {
   log(`${C.dim}$ npm run ${script}${C.off}`);
   const proc = spawn(npm, ['run', script], {
     cwd: opts.project,
+    env: { ...process.env, NO_COLOR: '1', FORCE_COLOR: '0' },
     stdio: ['ignore', 'pipe', 'pipe'],
     detached: process.platform !== 'win32',
     shell: process.platform === 'win32',
@@ -206,7 +207,8 @@ async function startServer(opts) {
       `Server did not report a URL within ${opts.timeout}ms.\nOutput:\n${buffer.slice(-2000)}`)), opts.timeout);
     const scan = (d) => {
       buffer += d.toString();
-      const m = buffer.match(URL_RE);
+      // CI runners (FORCE_COLOR) wrap the port in ANSI codes: "localhost:\x1b[1m4173\x1b[22m/". Strip them first.
+      const m = buffer.replace(/\x1b\[[0-9;]*m/g, '').match(URL_RE);
       if (m) { clearTimeout(timer); resolve(m[1].replace(/\/$/, '')); }
     };
     proc.stdout.on('data', scan);
