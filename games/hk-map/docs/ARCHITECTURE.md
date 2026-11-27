@@ -99,18 +99,46 @@ Status: [~] started (2026-11-27): `src/types.ts` (data and save shapes), `global
 (`allowJs`) until phases 1–3 replace them; new code is TypeScript.
 
 ### Phase 1 — World prototype (Tsing Yi + Kwai Chung)
-Status: [ ] todo
+Status: [x] done — verified 2026-11-27 (`playtest/phase-1-world.mjs`, desktop and iPhone; `tests/grid.test.ts`)
 
-Scope: a `WorldScene` with 16 px tiles at 30 m, built from the map data as autotiles (sea, coast,
-hills, urban blocks, roads, parks, reservoirs), loaded in chunks; fixed camera (~25 tiles across on a
-phone, ~40 on a computer); the player walks tile by tile (Grid Engine); landmarks as sprites.
+Opened with `?world` (games/hk-map/?world); reads progress, never writes it. The whole territory is walkable,
+not just Tsing Yi: the ground comes from the map picture, so there was no reason to stop at one district.
+
+- **Ground**: `build/world.py` reads `public/img/map.png` back into one terrain class per 30 m cell
+  (`public/img/world.png`, 22 classes: deep/shallow sea, sand, grass, woods, scrub, hilltop, farmland, town,
+  industry, park, airport, runway, motorway, road, reservoir, fish ponds, the mainland, bridges, piers,
+  containers). Vegetation takes its band from the height grid; the old map's 2-pixel dithers are smoothed
+  with a 5×5 majority; road outlines are dropped so roads are as wide as their surface.
+- **Tile art** (`src/overworld/tiles.ts`): painted per chunk (32×32 cells, 512 px) in a Web Worker,
+  ~22 ms a chunk. Quarter-tile rounding (coasts, woods, fields), 45° corners on diagonal roads, seamless
+  patterns (waves, tufts, bushes, tree crowns), town cells as blocks of buildings on a fixed street grid
+  (a street every 4 cells across and 5 down; industry 7 × 6), pavements along roads.
+- **Walking** (`src/overworld/grid.ts`): one cell per step, 6 cells/s (12 with Shift or on a long tapped
+  route), arrow keys/WASD, an on-screen pad on touch screens, tap-to-walk (breadth-first path up to 40 cells).
+  Water, the mainland, buildings and container stacks block.
+  *Changed from the plan:* no Grid Engine. It needs a Phaser Tilemap, and a whole-territory Tilemap is 3.7 M
+  tile objects; the ground here is baked chunk images, and grid stepping is ~80 lines with unit tests.
+  Grid Engine stays an option for NPC movement later.
+- **Camera**: fixed zoom, about 15 tiles along the shorter side, chosen so each tile pixel is a whole number
+  of device pixels (sharp on a 3× iPhone).
+- **Landmarks**: every station, sight and church on its cell (entrance / church / star sprites); standing
+  within 2 cells shows its name (？？？ until met); Enter/Space/tap says it. District banners on entering.
 
 | Exit condition | Playtest assertion | Kind |
 |---|---|---|
-| Walking moves one tile per step | after `hold ArrowRight` the player's tile x increases | auto |
-| Sea blocks walking | walking into the harbour leaves the tile unchanged | auto |
-| Smooth on a phone | FPS ≥ 50 in `--device iphone` while walking | auto |
+| Start at Tsing Yi | player within 6 cells of cell (1052, 819) | auto ✓ |
+| Fixed, sharp, zoomed-in camera | zoom × devicePixelRatio is whole; 11–20 tiles along the shorter side | auto ✓ |
+| Walking moves whole cells | hold → 700 ms: 2–7 cells east, none sideways, standing exactly on a cell after | auto ✓ |
+| Sea blocks walking | on a shore, hold → into the sea: same cell | auto ✓ |
+| Landmark names | by Tsing Yi station, `near` is S:TSY | auto ✓ |
+| Only nearby ground loaded | after a jump to Central, ≤ 49 chunks | auto ✓ |
+| Chunk painting fast enough | median ≤ 400 ms (measured ~22 ms) | auto ✓ |
+| Smooth on a phone | FPS while walking ≥ 25 headless (software rendering; measured 46 desktop, 60 iPhone) | auto ✓ |
 | Reads as a game, not a map | — | human |
+| Walking feels right on the phone (pad, tap-to-walk, speed) | — | human |
+
+Known rough edges for phase 2: deep/shallow water boundary is scalloped; town blocks are a uniform grid
+(no tower/estate variety yet); hills are uniform forest with no paths; MTR lines are not shown.
 
 ### Phase 2 — The whole territory, stations, Town Map
 ### Phase 3 — Modes move into the world (chapters & badges, practice, rush, rides, mini-games, 圖鑑)

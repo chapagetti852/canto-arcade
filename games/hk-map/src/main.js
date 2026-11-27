@@ -42,6 +42,8 @@ function start() {
   window.addEventListener('resize', () => setTimeout(placeBao, 60));
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
   document.fonts.load('12px FP', '港鐵Āā').catch(() => {}).finally(() => {
+    // ?world: the new open world (phase 1 prototype, docs/ARCHITECTURE.md) instead of the usual game
+    if (params.has('world')) { document.getElementById('boot')?.remove(); import('./overworld/boot').then(m => { GAME = m.startOverworld(); }); return; }
     GAME = new Phaser.Game({ type: Phaser.AUTO, parent: 'map', backgroundColor: DATA.sea || '#3a6c9b', pixelArt: true, roundPixels: false, antialias: false,
       scale: { mode: Phaser.Scale.RESIZE, width: '100%', height: '100%' }, loader: { imageLoadType: 'HTMLImageElement' }, input: { activePointers: 3 }, scene: [MapScene] });
   });

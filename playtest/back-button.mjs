@@ -1,6 +1,6 @@
 // The way back to the arcade (◀ 機舖) must never sit on top of another button, in either game,
 // on any screen, at desktop or phone size. `npm run verify` runs this twice: at 1280×720 with the
-// other scenarios, and on its own with --device iphone (390×844, touch). Each run checks the full
+// other scenarios, and with --device iphone (390×844, touch) through playtest/phone/. Each run checks the full
 // window and a 664px-tall one too: an iPhone in Safari, with its toolbars, is 390×664.
 //
 // Each game is opened in a full-window iframe over the arcade, so the arcade page (and the

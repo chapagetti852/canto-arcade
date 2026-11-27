@@ -15,7 +15,7 @@
     "build:games": "npm run build -w games/canto-numbers -- --outDir ../../public/games/canto-numbers --emptyOutDir && npm run build -w games/hk-map -- --outDir ../../public/games/hk-map --emptyOutDir",
     "hkmap": "npm run data -w games/hk-map && npm run fonts -w games/hk-map",
     "font": "python3 tools/subset-zh.py",
-    "playtest:phone": "node tools/playtest.mjs --project . --mode build --device iphone --scenario playtest/back-button.mjs"
+    "playtest:phone": "node tools/playtest.mjs --project . --mode build --device iphone --scenario playtest/phone"
   },
   "dependencies": {
     "phaser": "^4.2.1"
