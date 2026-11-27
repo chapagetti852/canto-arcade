@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.playtest/
+*.log
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# built by `npm run build:games`
+public/games/canto-numbers/
+!games/canto-numbers/.env.production
+__pycache__/
