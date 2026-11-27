@@ -1,16 +1,34 @@
 {
-  "name": "Canto Arcade · 廣東話機舖",
-  "short_name": "Canto Arcade",
-  "description": "Walk around Hong Kong and learn its Cantonese names, with an arcade of learning games inside.",
+  "name": "Canto Town",
+  "short_name": "Canto Town",
+  "description": "Walk around Hong Kong and learn its Cantonese names — with an arcade of learning games in town.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#120b24",
-  "theme_color": "#120b24",
+  "background_color": "#2c5a8c",
+  "theme_color": "#2c5a8c",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
   ]
 }
