@@ -1,7 +1,7 @@
 
 import os as _os
 HK = _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))          # games/hk-map
-OUT = _os.path.join(HK, "..", "..", "public", "games", "hk-map")              # the built game the arcade serves
+OUT = _os.path.join(HK, "public")                                            # the game's static files (Vite copies them into the build)
 EXT = _os.environ.get("HKMAP_EXTERNAL", "/home/claude/hkmap-external")       # big map-rendering inputs not kept in the repo (see README)
 """Render the game's base map: a pixel 'paper atlas' of Hong Kong.
 Inputs: land/China masks (OSM land polygons + Natural Earth), reservoir outlines and peaks from OpenStreetMap."""

@@ -1,8 +1,7 @@
 /* 香港通 Hēunggóng Tūng — a pixel field guide to Hong Kong.
    Map + game: Phaser 4 · music: Tone.js · sound effects: ZzFX · confetti: canvas-confetti · icons: pixelarticons.
    Everything you do is stored in this browser only (localStorage). No accounts, no server. */
-(() => {
-'use strict';
+import Phaser from 'phaser';
 const DATA = window.HK_DATA, PH = window.HK_PHOTOS || {}, ICONS = window.HK_ICONS || {}, BUNDLED = new Set(window.HK_AUDIO || []);
 const ITEMS = DATA.items, BY = {}; ITEMS.forEach(i => BY[i.k] = i);
 const GEO = DATA.geo, LEVELS = DATA.levels, LINES = DATA.lines, CAT = DATA.cat || {};
@@ -460,7 +459,7 @@ let MAP = null;
 const MARK_INK = 0x241a12;
 class MapScene extends Phaser.Scene {
   constructor() { super('map'); }
-  preload() { this.load.image('map', 'img/map.png?v=202611270242'); this.load.image('cnmask', 'img/cn.png?v=202611270242'); this.load.image('seatile', 'img/sea.png?v=202611270242'); this.load.image('areas', 'img/areas.png?v=202611270242'); }
+  preload() { this.load.image('map', 'img/map.png?v=__BUILD__'); this.load.image('cnmask', 'img/cn.png?v=__BUILD__'); this.load.image('seatile', 'img/sea.png?v=__BUILD__'); this.load.image('areas', 'img/areas.png?v=__BUILD__'); }
   create() {
     MAP = this; const cam = this.cam = this.cameras.main;
     cam.setBackgroundColor(DATA.sea || '#3a6c9b'); cam.setBounds(-4000, -4000, DATA.W + 8000, DATA.H + 8000); /* loose: the map must be free to sit above a tall phone menu */
@@ -1799,7 +1798,6 @@ function openMinis() {
   $('#modal-box').querySelectorAll('[data-id]').forEach(b => b.onclick = () => { closeModal(false); runMini(b.dataset.id).then(() => G.home()); });
   bind($('#modal-box'), { x: () => closeModal() });
 }
-
 let GAME = null;
 if (params.has('debug')) window.__hk = { G, map: () => MAP, ST: () => ST, areaKeyAt: (x, y, c) => areaKeyAt(x, y, c), runMini: id => runMini(id) };
 function start() {
@@ -1829,4 +1827,3 @@ function start() {
 // For the arcade's playtests (playtest/back-button.mjs): drive the screens from outside the closure.
 window.__hk = { G, LEVELS, ITEMS, MG, showFact, openCollection, openSettings, openMinis, openSnackBook, runMini, closeModal, modalOpen };
 start();
-})();
