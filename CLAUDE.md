@@ -24,8 +24,15 @@ Joseph's Cantonese learning games in one place: a Phaser 4 arcade room you walk 
 - `npm run verify` — typecheck + unit tests (arcade and Canto Numbers) + production-build playtest. The deploy gate.
 - In a sandbox without Playwright's own browser: `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=$(ls -d /opt/pw-browsers/chromium_headless_shell-*/*/chrome-headless-shell | head -1) npm run verify`.
 
-## The Anki principle (games to come)
-Every game except Canto Numbers is built around the first learning of Anki cards: cards start suspended; the game teaches them; learned cards are unsuspended (due today) via AnkiConnect from desktop Chrome, or queued on the phone and applied later. See `canto-course/CLAUDE.md`.
+## Anki (private Anki mode)
+Every game except Canto Numbers is built around the first learning of Anki cards: cards start suspended; the game teaches them; learned cards are unsuspended and made due today. See `canto-course/CLAUDE.md`.
+- **Anki mode** is per browser: `?anki` turns it on (`?anki=off` off); flags `canto-anki` / `hkmap-anki` (shared with 香港通). Only then does the arcade show the Anki light (top right) and run `ArcadeScene.ankiRound()` on every visit.
+- **Sync** (`src/shared/gist.ts`): Joseph's secret gist, token in this browser only (`hkmap-sync`, set up once in 香港通 → Settings). Files: `hkmap-progress.json` (map; same merge as the map game, `settings` never uploaded), `canto-numbers.json` (best scores), `canto-arcade.json` (visits). Merges in `src/logic/sync.ts`.
+- **AnkiConnect** (`src/shared/anki.ts`): `http://127.0.0.1:8765`, from desktop Chrome on his Mac (`https://chapagetti852.github.io` is in its `webCorsOriginList`). The CSP in `vite.config.ts` allows it and `api.github.com`.
+- **香港通 → Anki** (`src/shared/ankiLink.ts`, rules in `src/logic/hkmapAnki.ts`, item list `public/games/hk-map/js/anki-items.json` from `make_data.py`): learned-but-unsent places → `findCards "(<query>) is:suspended"` → `unsuspend` + `setDueDate 0` → marked in the map save's `sent` → synced back up. Only suspended cards are ever touched. Played on the phone = waits in the save until the arcade next runs on the Mac with Anki open.
+- **New games** should follow the same shape: learned items recorded in the game's own save, a "ready" rule, and a send step in `ankiRound()`.
+- **Card snapshot**: the Anki panel's "Export card snapshot" downloads every Cantonese note (fields as text, tags, decks, card states) for `canto-course/anki/`.
+- `playtest/anki.mjs` covers all of this with a stand-in AnkiConnect and gist installed in the page.
 
 ## Working style
 Use the phaser4-gamedev skills (phaser-coder, phaser-scene, phaser-ui, phaser-playtest, …). Verify in the browser before reporting done. Keep replies to Joseph concise and simple.

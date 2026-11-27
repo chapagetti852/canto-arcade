@@ -460,7 +460,7 @@ let MAP = null;
 const MARK_INK = 0x241a12;
 class MapScene extends Phaser.Scene {
   constructor() { super('map'); }
-  preload() { this.load.image('map', 'img/map.png?v=202611270932'); this.load.image('cnmask', 'img/cn.png?v=202611270932'); this.load.image('seatile', 'img/sea.png?v=202611270932'); this.load.image('areas', 'img/areas.png?v=202611270932'); }
+  preload() { this.load.image('map', 'img/map.png?v=202611270956'); this.load.image('cnmask', 'img/cn.png?v=202611270956'); this.load.image('seatile', 'img/sea.png?v=202611270956'); this.load.image('areas', 'img/areas.png?v=202611270956'); }
   create() {
     MAP = this; const cam = this.cam = this.cameras.main;
     cam.setBackgroundColor(DATA.sea || '#3a6c9b'); cam.setBounds(-4000, -4000, DATA.W + 8000, DATA.H + 8000); /* loose: the map must be free to sit above a tall phone menu */

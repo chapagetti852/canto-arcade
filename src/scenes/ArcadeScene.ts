@@ -2,6 +2,10 @@ import Phaser from 'phaser';
 import { FRONT_Y, MACHINES, type Machine, machineAt, playable } from '../logic/machines';
 import { ARCADE_KEY, parseArcade, progressLine, recordVisit } from '../logic/progress';
 import { TXT } from '../shared/pixel';
+import { ankiMode, mapWaiting, sendMapToAnki } from '../shared/ankiLink';
+import { ankiReachable } from '../shared/anki';
+import { syncAll, syncOn } from '../shared/gist';
+import { closeAnkiPanel, openAnkiPanel, type PanelState } from '../ui/ankiPanel';
 import { sfx } from '../shared/sfx';
 
 const ls = {
@@ -21,6 +25,9 @@ export class ArcadeScene extends Phaser.Scene {
   private target: { x: number; y: number; play?: Machine } | null = null;
   private screens: { m: Machine; g: Phaser.GameObjects.Graphics; t?: Phaser.GameObjects.Text }[] = [];
   private bar!: { box: Phaser.GameObjects.Rectangle; name: Phaser.GameObjects.Text; info: Phaser.GameObjects.Text; play: Phaser.GameObjects.Text };
+  private progress: Record<string, Phaser.GameObjects.Text> = {};
+  private light: Phaser.GameObjects.Text | null = null;
+  anki: PanelState = { reachable: false, waiting: 0, sync: 'off', lastSent: '' };
   private stepT = 0;
   private animT = 0;
 
@@ -33,6 +40,9 @@ export class ArcadeScene extends Phaser.Scene {
     this.launching = null;
     this.target = null;
     this.screens = [];
+    this.progress = {};
+    this.light = null;
+    closeAnkiPanel();
     this.add.image(0, 0, 'room').setOrigin(0).setDepth(0);
     this.makeSign();
     const solid = this.physics.add.staticGroup();
@@ -61,6 +71,51 @@ export class ArcadeScene extends Phaser.Scene {
       back ? 'Fūnyìhng fāanlàih! · welcome back' : 'Fūnyìhng! · walk up to a machine to play',
     );
     this.cameras.main.fadeIn(300, 0, 0, 0);
+    if (ankiMode()) this.startAnki();
+  }
+
+  // ── Joseph's private Anki mode: sync between devices, then send learned places to Anki ──
+
+  private startAnki(): void {
+    this.light = this.add.text(472, 6, 'Anki ○', TXT('#8a8aa0')).setOrigin(1, 0).setDepth(30).setInteractive({ useHandCursor: true });
+    this.light.on('pointerdown', (_p: Pointer, _x: number, _y: number, e: Phaser.Types.Input.EventData) => {
+      e.stopPropagation();
+      openAnkiPanel(this.anki, { sync: () => void this.ankiRound() });
+    });
+    void this.ankiRound();
+  }
+
+  async ankiRound(): Promise<void> {
+    const alive = (): boolean => this.sys.isActive() && !!this.light;
+    const setLight = (t: string, c: string): void => { if (alive()) this.light!.setText(t).setColor(c); };
+    setLight('Anki …', '#8a8aa0');
+    const sync = async (): Promise<void> => {
+      if (!syncOn()) { this.anki.sync = 'not set up (connect it once in 香港通 → Settings)'; return; }
+      try { await syncAll(); this.anki.sync = 'synced ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
+      catch (e) { this.anki.sync = 'failed: ' + (e as Error).message; }
+    };
+    await sync();
+    if (alive()) this.refreshProgress();
+    this.anki.reachable = await ankiReachable();
+    if (this.anki.reachable) {
+      try {
+        const sent = await sendMapToAnki();
+        if (sent && sent.places) {
+          this.anki.lastSent = `Just now: ${sent.places} learned 香港通 place${sent.places > 1 ? 's' : ''} → ${sent.cards} card${sent.cards === 1 ? '' : 's'} unsuspended, due today.`;
+          if (alive()) { sfx.coin(); this.say('解鎖！', `Gáaisó ${sent.cards} jēung kāat · ${sent.places} learned place${sent.places > 1 ? 's' : ''} from 香港通 now in Anki, due today`); }
+          await sync();
+        }
+      } catch (e) {
+        this.anki.lastSent = 'Sending to Anki failed: ' + (e as Error).message;
+      }
+    }
+    try { this.anki.waiting = await mapWaiting(); } catch { this.anki.waiting = 0; }
+    if (this.anki.reachable) setLight('Anki ●', '#4ade80');
+    else setLight(this.anki.waiting ? `Anki ○ ${this.anki.waiting}` : 'Anki ○', '#8a8aa0');
+  }
+
+  private refreshProgress(): void {
+    for (const [id, t] of Object.entries(this.progress)) { const line = progressLine(id, ls.get); if (line) t.setText(line); }
   }
 
   // ── the room ────────────────────────────────────────────────────────────────
@@ -93,7 +148,7 @@ export class ArcadeScene extends Phaser.Scene {
     this.screens.push({ m, g, t });
     // your progress, on the floor in front
     const line = progressLine(m.id, ls.get);
-    if (line) this.add.text(m.x, CAB_BOTTOM + 22, line, TXT('#c9b8ff')).setOrigin(0.5).setDepth(2).setAlpha(0.9);
+    if (live) this.progress[m.id] = this.add.text(m.x, CAB_BOTTOM + 22, line ?? '', TXT('#c9b8ff')).setOrigin(0.5).setDepth(2).setAlpha(0.9);
   }
 
   private drawScreens(t: number): void {

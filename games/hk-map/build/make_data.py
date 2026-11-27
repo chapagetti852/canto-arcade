@@ -32,6 +32,9 @@ d['areaIdx']=json.load(open(HK+"/build"+'/areas.json',encoding='utf-8')); d['fer
 # Anki notes for regions, districts, churches and extra landmarks (added 2026-11-25, tagged hkmap::<key>)
 for i in d['items']:
     if not i.get('anki') and i['k'] != 'R:KLN' and (i['t'] in 'rdc' or i['k'].startswith('X:')): i['anki'] = 'tag:hkmap::' + i['k'].replace(':', '-')
+# for the arcade's Anki link: which items have Anki notes, their type, and the Anki search that finds them
+os.makedirs(OUT+'/js',exist_ok=True)
+json.dump([[i['k'], i['t'], i['anki']] for i in d['items'] if i.get('anki')], open(OUT+'/js/anki-items.json','w',encoding='utf-8'), ensure_ascii=False, separators=(',',':'))
 aud=sorted(os.listdir(OUT+"/audio"))
 os.makedirs(OUT+'/js',exist_ok=True)
 with open(OUT+'/js/data.js','w',encoding='utf-8') as f:
